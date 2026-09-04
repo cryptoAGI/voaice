@@ -1,0 +1,255 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>vCLONE — capture and measure | voaice</title>
+<style>
+:root{--bg0:#000;--bg1:#080a16;--txt:#fff;--muted:rgba(255,255,255,.78);--quiet:rgba(255,255,255,.42);
+  --cy:34,211,238;--vi:157,78,221;--am:255,176,84;--rd:248,81,73;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 70% at 50% 0%,var(--bg1) 0%,var(--bg0) 60%);
+  color:var(--txt);font-family:var(--sans);line-height:1.65}
+.wrap{max-width:80ch;margin:0 auto;padding:38px 22px 110px}
+h1{font-size:clamp(25px,5vw,38px);margin:0 0 6px;letter-spacing:-.015em}
+.lede{color:var(--quiet);font-size:14px;margin:0 0 24px}
+h2{margin:30px 0 8px;font-size:11.5px;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;color:rgb(var(--am))}
+p{margin:0 0 13px;color:var(--muted);font-size:14.5px}
+li{color:var(--muted);margin:5px 0;font-size:14.5px}
+code{font-family:var(--mono);font-size:.9em;color:rgb(var(--am));background:rgba(255,255,255,.05);padding:1px 5px;border-radius:4px}
+a{color:rgb(var(--cy));text-decoration:none;border-bottom:1px solid rgba(var(--cy),.3)}
+.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+button{font:inherit;font-size:12.5px;font-family:var(--mono);letter-spacing:.12em;padding:10px 20px;border-radius:9px;
+  background:rgba(var(--cy),.14);color:rgb(var(--cy));border:1px solid rgba(var(--cy),.45);cursor:pointer}
+button:hover{background:rgba(var(--cy),.24)}
+button[disabled]{opacity:.4;cursor:not-allowed}
+button.rec{background:rgba(var(--rd),.16);color:#ff6b64;border-color:rgba(var(--rd),.5)}
+canvas{width:100%;height:120px;display:block;border-radius:10px;background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.09);margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:7px;margin:0 0 12px}
+.m{font-family:var(--mono);font-size:11px;padding:7px 10px;border-radius:8px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+.m b{display:block;color:rgb(var(--am));font-weight:400;letter-spacing:.1em;font-size:9.5px;margin-bottom:2px}
+.m span{color:#dfe8f0}
+.m i{display:block;font-style:normal;color:var(--quiet);font-size:10px;overflow-wrap:anywhere}
+.print{font-family:var(--mono);font-size:11px;padding:10px 12px;border-radius:9px;margin:0 0 12px;
+  background:rgba(var(--vi),.08);border:1px solid rgba(var(--vi),.3);overflow-wrap:anywhere;color:var(--muted)}
+.print b{color:rgb(var(--am));font-weight:400}
+.note{font-family:var(--mono);font-size:11px;color:var(--quiet);min-height:1.5em;margin:0 0 10px}
+.note.bad{color:rgba(255,150,150,.9)}
+.warn{border-left:2px solid rgba(var(--am),.6);padding:2px 0 2px 13px;margin:0 0 14px}
+.foot{margin-top:40px;padding-top:15px;border-top:1px solid rgba(255,255,255,.08);
+  font-family:var(--mono);font-size:11px;color:var(--quiet);line-height:2}
+</style>
+
+<div class="wrap">
+<h1>vCLONE — capture and measure</h1>
+<p class="lede">A microphone, eight metrics, and a voiceprint over them. Nothing leaves this page.</p>
+
+<div class="bar">
+  <button id="rec" type="button">● RECORD</button>
+  <button id="stop" type="button" disabled>■ STOP</button>
+  <button id="dlwav" type="button" disabled>⇣ WAV</button>
+  <button id="dlv" type="button" disabled>⇣ .voaice</button>
+</div>
+<canvas id="scope" width="1200" height="240"></canvas>
+<p class="note" id="note">press RECORD — the browser will ask for the microphone</p>
+<div class="grid" id="grid"></div>
+<div class="print" id="print" hidden></div>
+
+<h2>What this does, and what it does not</h2>
+<p><b>It measures.</b> It takes audio from your microphone, computes the eight acoustic metrics the
+DeltaVerse oscilloscope defines, encodes each as an 18-decimal fixed-point integer, and hashes the
+canonical form into a <b>vprint</b> — SHA-256, SHA-512, and the digest read as a uint256. You can
+keep the recording as a WAV and the identity as a <code>.voaice</code>.</p>
+<p><b>It does not clone.</b> There is no synthesiser here and nothing in this repository will turn a
+capture into a speaking voice. The <code>synthesis</code> field in a <code>.voaice</code> is the
+seam where one would attach, and it is null in every file shipped here.</p>
+<div class="warn">
+<p><b>A vprint is a fingerprint of a measurement, not of a person.</b> Change the FFT size, the
+sample rate, the window, the microphone or the length of the excerpt and every metric moves, so the
+print moves with it. Two recordings of the same person measured differently produce different
+prints. It is evidence that two files came from the same measured signal. It is <b>not a biometric
+and must not be used as one</b> — the comparison tool refuses to compare prints whose measurement
+parameters differ rather than returning a number that looks like an answer.</p>
+</div>
+<p><b>Nothing is uploaded.</b> There is no server behind this page. The audio never leaves the tab,
+the WAV is encoded in the browser, and the <code>.voaice</code> is written from what you can see on
+screen. Close the tab and it is gone.</p>
+
+<div class="foot">
+  voaice · <a href="https://deltaverse.pythai.net/voices">the voices</a> ·
+  <a href="https://deltaverse.pythai.net/docsplayer">doc.player</a> ·
+  <code>engine/oscilloscope.js</code> is the definition; <code>tools/vprint.py</code> is its twin
+</div>
+</div>
+
+<script src="../engine/oscilloscope.js"></script>
+<script>
+(function () {
+  'use strict';
+  var REC = document.getElementById('rec'), STOP = document.getElementById('stop');
+  var DLW = document.getElementById('dlwav'), DLV = document.getElementById('dlv');
+  var NOTE = document.getElementById('note'), GRID = document.getElementById('grid');
+  var PRINT = document.getElementById('print'), CV = document.getElementById('scope');
+  var ctx2 = CV.getContext('2d');
+  var FFT = 2048;
+  var ac = null, stream = null, analyser = null, node = null;
+  var chunks = [], sr = 0, raf = 0, prevFreq = null, last = null, blob = null;
+
+  function say(m, bad) { NOTE.textContent = m || ''; NOTE.classList.toggle('bad', !!bad); }
+
+  var KEYS = ['rms', 'dominantFrequency', 'spectralCentroid', 'spectralRolloff',
+              'zeroCrossingRate', 'spectralBandwidth', 'spectralFlux', 'harmonicNoiseRatio'];
+  function paintMetrics(m) {
+    GRID.innerHTML = '';
+    KEYS.forEach(function (k) {
+      var d = document.createElement('div'); d.className = 'm';
+      d.innerHTML = '<b>' + k + '</b><span>' + m.value[k].toPrecision(9) + '</span>' +
+                    '<i>' + m.precision18[k].wei + ' wei</i>';
+      GRID.appendChild(d);
+    });
+  }
+
+  function draw(time) {
+    var w = CV.width, h = CV.height;
+    ctx2.clearRect(0, 0, w, h);
+    ctx2.strokeStyle = 'rgba(34,211,238,.75)'; ctx2.lineWidth = 2; ctx2.beginPath();
+    for (var i = 0; i < time.length; i++) {
+      var x = i / (time.length - 1) * w, y = h / 2 - time[i] * (h / 2) * 0.95;
+      i ? ctx2.lineTo(x, y) : ctx2.moveTo(x, y);
+    }
+    ctx2.stroke();
+  }
+
+  function frame() {
+    if (!analyser) return;
+    var t = new Float32Array(analyser.fftSize);
+    var db = new Float32Array(analyser.frequencyBinCount);
+    analyser.getFloatTimeDomainData(t);
+    analyser.getFloatFrequencyData(db);
+    // dB IS NOT MAGNITUDE. Every metric weights bins with max(0, x), and a normal
+    // spectrum in dB is entirely negative — so without this every spectral metric
+    // is 0.0 for any real signal, silently, and the print hashes the zeros as if
+    // they had been measured.
+    var mag = DVScope.linearFromDb(db, -100);
+    var m = DVScope.metrics(t, mag, sr, prevFreq);
+    prevFreq = mag.slice();
+    last = m;
+    paintMetrics(m);
+    draw(t);
+    raf = requestAnimationFrame(frame);
+  }
+
+  REC.addEventListener('click', function () {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      say('this browser has no microphone API', true); return;
+    }
+    // Nothing is asked for beyond audio, and nothing is processed away: echo
+    // cancellation and noise suppression would change every metric before it was
+    // measured, which is the one thing a measuring tool must not let happen.
+    navigator.mediaDevices.getUserMedia({ audio: {
+      echoCancellation: false, noiseSuppression: false, autoGainControl: false
+    } }).then(function (s) {
+      stream = s;
+      ac = new (window.AudioContext || window.webkitAudioContext)();
+      sr = ac.sampleRate;
+      var src = ac.createMediaStreamSource(s);
+      analyser = ac.createAnalyser(); analyser.fftSize = FFT;
+      node = ac.createScriptProcessor ? ac.createScriptProcessor(4096, 1, 1) : null;
+      src.connect(analyser);
+      chunks = []; prevFreq = null;
+      if (node) {
+        src.connect(node);
+        // A ScriptProcessor needs a destination to be pulled, but hearing your own
+        // microphone through your speakers is a feedback loop. Silence it instead.
+        var mute = ac.createGain(); mute.gain.value = 0;
+        node.connect(mute); mute.connect(ac.destination);
+        node.onaudioprocess = function (e) { chunks.push(new Float32Array(e.inputBuffer.getChannelData(0))); };
+      }
+      REC.disabled = true; STOP.disabled = false; REC.classList.add('rec');
+      DLW.disabled = DLV.disabled = true; PRINT.hidden = true;
+      say('recording at ' + sr + ' Hz, fftSize ' + FFT + ' — these are part of the print');
+      frame();
+    }).catch(function (e) {
+      say('microphone refused: ' + (e && e.name || e), true);
+    });
+  });
+
+  STOP.addEventListener('click', function () {
+    if (raf) cancelAnimationFrame(raf); raf = 0;
+    if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+    if (node) node.onaudioprocess = null;
+    REC.disabled = false; STOP.disabled = true; REC.classList.remove('rec');
+    var secs = chunks.reduce(function (a, c) { return a + c.length; }, 0) / (sr || 1);
+    if (!last) { say('nothing was measured', true); return; }
+    blob = chunks.length ? wav(chunks, sr) : null;
+    DLW.disabled = !blob; DLV.disabled = false;
+    say('stopped — ' + secs.toFixed(2) + ' s captured');
+    DVScope.voiceprint(last).then(function (vp) {
+      PRINT.hidden = false;
+      PRINT.innerHTML =
+        '<b>vprint</b> ' + vp.hash + '<br><b>sha512</b> ' + vp.hash512.slice(0, 64) + '…' +
+        '<br><b>uint256</b> ' + vp.uint256 +
+        '<br><b>measured with</b> fft ' + FFT + ' · ' + sr + ' Hz · live frame, not averaged' +
+        ' — a print from other parameters is not comparable with this one';
+      last._vp = vp;
+    }).catch(function (e) { say('WebCrypto unavailable: ' + e.message, true); });
+  });
+
+  // A 16-bit PCM WAV, written here, because a measuring tool that hands you a
+  // container you cannot re-measure is not much use.
+  function wav(parts, rate) {
+    var n = parts.reduce(function (a, c) { return a + c.length; }, 0);
+    var b = new ArrayBuffer(44 + n * 2), v = new DataView(b), o = 0;
+    function s(t) { for (var i = 0; i < t.length; i++) v.setUint8(o++, t.charCodeAt(i)); }
+    function u32(x) { v.setUint32(o, x, true); o += 4; }
+    function u16(x) { v.setUint16(o, x, true); o += 2; }
+    s('RIFF'); u32(36 + n * 2); s('WAVEfmt '); u32(16); u16(1); u16(1);
+    u32(rate); u32(rate * 2); u16(2); u16(16); s('data'); u32(n * 2);
+    parts.forEach(function (c) {
+      for (var i = 0; i < c.length; i++) {
+        var x = Math.max(-1, Math.min(1, c[i]));
+        v.setInt16(o, x < 0 ? x * 0x8000 : x * 0x7fff, true); o += 2;
+      }
+    });
+    return new Blob([b], { type: 'audio/wav' });
+  }
+
+  function save(data, name, type) {
+    var u = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: type }));
+    var a = document.createElement('a'); a.href = u; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+  }
+
+  DLW.addEventListener('click', function () { if (blob) save(blob, 'vclone-capture.wav'); });
+  DLV.addEventListener('click', function () {
+    if (!last) return;
+    var vp = last._vp || {};
+    var doc = {
+      format: 'voaice/1', id: 'vclone', label: 'vCLONE',
+      engine: 'voaice', model: '', sampleRate: sr,
+      measured: { seconds: null, f0: null, metrics: last.value },
+      vprint: {
+        hash: vp.hash || null, hash512: vp.hash512 || null,
+        uint256: vp.uint256 || null, version: 'dvscope/1',
+        precision18: last.precision18,
+        // WRITTEN DOWN BECAUSE THE COMPARISON DEPENDS ON THEM. A print without
+        // its parameters is a number nobody can responsibly compare to anything.
+        params: { fft: FFT, hop: null, window: 'analyser', sampleRate: sr,
+                  framesAveraged: false, source: 'microphone' }
+      },
+      provenance: { text: '', source: 'microphone capture, web/capture.html',
+                    measuredAt: new Date().toISOString(), tool: 'capture.html voaice/1' },
+      synthesis: null,
+      _note: 'measured from a single live analyser frame, not averaged over a file — ' +
+             'tools/voaice.py measure produces the averaged kind and the two are not comparable'
+    };
+    save(JSON.stringify(doc, null, 1) + '\n', 'vclone.voaice', 'application/json');
+  });
+
+  if (!window.DVScope) say('engine/oscilloscope.js did not load — nothing can be measured', true);
+  else if (!window.isSecureContext) say('a microphone needs https or localhost; this page is neither', true);
+})();
+</script>
