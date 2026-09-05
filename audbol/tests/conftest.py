@@ -1,6 +1,10 @@
-import math, struct, wave
+import math, struct, sys, wave
 from pathlib import Path
 import pytest
+
+# The package lives beside this tests/ directory; make `import audbol` work from wherever
+# pytest is invoked — the repo root of a host repository included.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 @pytest.fixture(scope="session")
