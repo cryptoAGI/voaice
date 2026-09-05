@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>audbol · the instrument</title>
+<meta name="description" content="audbol serve: one audio file under the playdocs substrate — the ground, the ring, the strip and the waveform — with every selection re-measured on the host in Fixed18.">
+<!--
+  audbol · the instrument.
+
+  ONE FILE, TWO LANES. The browser lane draws and measures the signal AS IT PLAYS: the substrate
+  saved from playdocs (substrate/PROVENANCE.md) reads one AnalyserNode per frame and every pixel
+  of it is measured. The host lane measures the FILE, once, exactly, in Fixed18 (audbol.measure)
+  — the numbers in the right-hand column — and re-measures whatever region you select on the
+  waveform, so a claim about "the vowel at 12.4 s" is a claim about those frames and no others.
+
+  THE AUDIO GRAPH IS BUILT ON THE FIRST GESTURE AND NOT BEFORE. An AudioContext constructed
+  without a gesture is created suspended and its analyser reads zeroes forever; the substrates
+  would faithfully draw that silence and be RIGHT. createMediaElementSource may be called ONCE per
+  element, ever, so the attempt is latched (playdocs' lesson, kept).
+-->
+<style>
+:root{
+  --dv-bg:#05060c;--dv-ink:#e6edf3;--dv-violet:#8b5cf6;--dv-electric:#9fe9ff;--dv-gold:#ffd166;
+  --dv-accent:#9d4edd;--dv-agent:#7ee787;--dv-cyan:#22d3ee;
+  --cy:34,211,238;--vi:157,78,221;--am:255,176,84;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --quiet:rgba(255,255,255,.42);--muted:rgba(255,255,255,.72)
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--dv-bg);color:var(--dv-ink);
+  font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+canvas#bg,canvas#border{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+canvas#bg{opacity:.55}
+.wrap{position:relative;z-index:1;display:grid;grid-template-rows:auto 1fr auto;min-height:100vh;padding:26px}
+header{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;margin-bottom:10px}
+header h1{font:600 15px/1 var(--mono);letter-spacing:.14em;margin:0;color:rgb(var(--am))}
+header .src{font:11px var(--mono);color:var(--quiet);word-break:break-all}
+header .src b{color:var(--muted);font-weight:400}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:16px;min-height:0}
+@media (max-width:900px){main{grid-template-columns:minmax(0,1fr)}}
+.deck{display:grid;grid-template-rows:auto minmax(120px,160px) minmax(200px,1fr) auto;gap:10px;min-height:0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.btn{font:600 12px var(--mono);letter-spacing:.08em;padding:8px 12px;border-radius:8px;cursor:pointer;
+  background:#0b0f1a;color:var(--dv-ink);border:1px solid rgba(255,255,255,.18)}
+button:hover{border-color:rgba(var(--cy),.6)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.hot{background:rgba(248,81,73,.12);color:#ff6b64;border-color:rgba(248,81,73,.7)}
+button.am{color:rgb(var(--am));border-color:rgba(var(--am),.5)}
+label.fld{display:inline-flex;align-items:center;gap:7px;font:10.5px var(--mono);letter-spacing:.1em;color:var(--quiet)}
+label.fld input[type=range]{width:110px;accent-color:rgb(var(--cy))}
+label.fld b{color:var(--dv-ink);font-weight:400;min-width:3.2em;display:inline-block}
+.box{position:relative;border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden;background:rgba(4,5,12,.72);backdrop-filter:blur(6px)}
+.box .hd{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;font:10px var(--mono);letter-spacing:.18em;
+  text-transform:uppercase;color:rgb(var(--am));border-bottom:1px solid rgba(255,255,255,.07)}
+.box .hd span{color:var(--quiet);letter-spacing:.06em;text-transform:none}
+.box .cv{position:relative;width:100%;height:calc(100% - 33px)}
+.box .cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#status{font:11.5px var(--mono);color:var(--muted);min-height:1.4em;margin:0}
+#status.bad{color:#ff6b64}
+aside{display:grid;grid-template-rows:auto auto 1fr;gap:10px;min-height:0}
+.meter{padding:10px 12px;font:11px var(--mono);line-height:1.9}
+.meter h3{margin:0 0 4px;font:600 10px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:rgb(var(--am))}
+.meter h3 span{color:var(--quiet);letter-spacing:.06em;text-transform:none;font-weight:400}
+.meter table{border-collapse:collapse;width:100%}
+.meter td{padding:1px 0;vertical-align:top;border-top:1px solid rgba(255,255,255,.04)}
+.meter td.k{color:var(--quiet);width:44%}
+.meter td.v{color:var(--dv-ink);text-align:right;font-variant-numeric:tabular-nums;word-break:break-all}
+.meter td.u{color:var(--quiet);width:3.5em;padding-left:6px}
+.meter .ex{color:rgba(var(--vi),.95)}
+.meter .same{color:var(--dv-agent)}
+.meter .diff{color:rgb(var(--am))}
+.live{overflow:auto}
+footer{margin-top:14px;font:10.5px var(--mono);color:var(--quiet);display:flex;flex-wrap:wrap;gap:6px 16px}
+footer a{color:rgb(var(--cy));text-decoration:none}
+.lit{color:var(--dv-agent)}
+@media (prefers-reduced-motion:reduce){canvas#bg{opacity:.35}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<canvas id="border" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header>
+    <h1>audbol</h1>
+    <span class="src" id="src">loading the source…</span>
+  </header>
+  <main>
+    <section class="deck">
+      <div class="bar">
+        <button id="play" type="button">▶ PLAY</button>
+        <button id="stop" type="button">■ STOP</button>
+        <button id="zsel" type="button" disabled title="zoom the waveform to the selection">ZOOM SEL</button>
+        <button id="zfit" type="button" title="the whole take">FIT</button>
+        <button id="clr" type="button" disabled title="clear the selection — the host measures the whole file again">CLEAR</button>
+        <label class="fld" title="a GainNode after the element — measured, so the substrate sees it; the host lane never does">GAIN <input id="gain" type="range" min="0" max="400" step="1" value="100"><b id="gainV">100%</b></label>
+        <label class="fld" title="playbackRate on the element — how fast you hear it, never what is in the file">SPEED <input id="rate" type="range" min="0.5" max="2.5" step="0.01" value="1"><b id="rateV">1.00×</b></label>
+        <label class="fld"><input id="loop" type="checkbox"> LOOP SEL</label>
+        <audio id="au" preload="auto" style="display:none"></audio>
+      </div>
+      <div class="box"><div class="hd">oscilloscope <span id="scopeState">untapped</span></div>
+        <div class="cv"><canvas id="strip"></canvas></div></div>
+      <div class="box"><div class="hd">waveform <span id="waveNote">decoding…</span></div>
+        <div class="cv"><canvas id="wave"></canvas></div></div>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+    <aside>
+      <div class="box meter" id="hostBox">
+        <h3>host lane · Fixed18 <span id="regionNote">whole file</span></h3>
+        <table id="host"><tr><td class="k">measuring…</td></tr></table>
+      </div>
+      <div class="box meter" id="bandBox">
+        <h3>power by band <span>fraction of total</span></h3>
+        <table id="bands"></table>
+      </div>
+      <div class="box meter live" id="liveBox">
+        <h3>browser lane · DVScope <span id="liveNote">nothing playing</span></h3>
+        <table id="live"></table>
+      </div>
+    </aside>
+  </main>
+  <footer>
+    <span>audbol serve · the substrate is playdocs', byte for byte (<a href="/substrate/voice-scope.js">voice-scope</a> · <a href="/substrate/periphery-frame.js">periphery-frame</a> · <a href="/substrate/waveform.js">waveform</a> · <a href="/substrate/oscilloscope.js">oscilloscope</a>)</span>
+    <span><a href="/api/report">/api/report</a> · <a href="/api/source">/api/source</a> · drag on the waveform, and <code>/api/measure?from=&amp;to=</code> answers for those frames only</span>
+  </footer>
+</div>
+
+<script src="/substrate/theme-read.js"></script>
+<script src="/substrate/oscilloscope.js"></script>
+<script src="/substrate/voice-scope.js"></script>
+<script src="/substrate/periphery-frame.js"></script>
+<script src="/substrate/waveform.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var AU = $('au');
+  var source = null, wave = null, bg = null, strip = null, ring = null;
+  var audio = { ctx: null, src: null, gain: null, analyser: null, ready: false, failed: false, why: '' };
+  var gestured = false, live = null, sel = null, measureSeq = 0, measureTimer = 0;
+
+  function say(html, bad) { $('status').innerHTML = html || ''; $('status').className = bad ? 'bad' : ''; }
+  function esc(t) { var d = document.createElement('i'); d.textContent = t == null ? '' : t; return d.innerHTML; }
+  function mmss(s) { s = +s || 0; var m = Math.floor(s / 60), r = s - m * 60; return m + ':' + (r < 10 ? '0' : '') + r.toFixed(2); }
+  function kb(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
+
+  // ── the substrates ─────────────────────────────────────────────────────
+  if (window.DVVoiceScope) {
+    try { bg = new DVVoiceScope.Field($('bg'), { background: true, printHz: 2 }).start(); } catch (e) { bg = null; }
+    try { strip = new DVVoiceScope.Field($('strip'), { background: false, printHz: 2 }).start(); } catch (e) { strip = null; }
+  }
+  if (window.DVPeriphery) {
+    try { ring = new DVPeriphery.Field($('border'), { pad: 14, motes: 200 }).start(); } catch (e) { ring = null; }
+  }
+
+  // eight log-spaced bands over 80–8000 Hz → the eight ring stations (playdocs' split, kept)
+  var BAND_LO = 80, BAND_HI = 8000, NB = 8, edges = null, ref = null, dbBuf = null, magBuf = null;
+  function buildBands(a) {
+    var n = a.frequencyBinCount, sr = (audio.ctx && audio.ctx.sampleRate) || 48000, hz = sr / a.fftSize;
+    edges = [];
+    for (var b = 0; b <= NB; b++) edges.push(Math.max(0, Math.min(n - 1, Math.round(BAND_LO * Math.pow(BAND_HI / BAND_LO, b / NB) / hz))));
+    ref = new Float32Array(NB); dbBuf = new Float32Array(n); magBuf = new Float32Array(n);
+  }
+  function pumpRing() {
+    if (!ring || !audio.analyser || !edges || !window.DVScope) return;
+    var a = audio.analyser;
+    if (dbBuf.length !== a.frequencyBinCount) buildBands(a);
+    try { a.getFloatFrequencyData(dbBuf); }
+    catch (e) { for (var z = 0; z < NB; z++) ring.charge(DVPeriphery.RING[z], 0); return; }
+    magBuf = DVScope.linearFromDb(dbBuf, a.minDecibels, magBuf);
+    for (var b = 0; b < NB; b++) {
+      var s = 0, c = 0;
+      for (var i = edges[b], i1 = Math.max(edges[b] + 1, edges[b + 1]); i < i1; i++) { s += magBuf[i] * magBuf[i]; c++; }
+      var m = c ? Math.sqrt(s / c) : 0;
+      ref[b] = Math.max(m, ref[b] * 0.985);
+      var v = ref[b] > 1e-9 ? m / ref[b] : 0;
+      ring.charge(DVPeriphery.RING[b], v * v);
+    }
+  }
+
+  // ── the audio graph: first gesture, once ───────────────────────────────
+  function ensureAudio() {
+    if (audio.ready || audio.failed || !gestured) return audio.ready ? audio : null;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) { audio.failed = true; audio.why = 'no AudioContext'; return null; }
+    try {
+      audio.ctx = new AC();
+      audio.src = audio.ctx.createMediaElementSource(AU);
+      audio.gain = audio.ctx.createGain();
+      audio.analyser = audio.ctx.createAnalyser();
+      audio.analyser.fftSize = 2048;
+      audio.analyser.smoothingTimeConstant = 0.72;
+      audio.src.connect(audio.gain); audio.gain.connect(audio.analyser); audio.analyser.connect(audio.ctx.destination);
+      audio.ready = true;
+      applyGain();
+      buildBands(audio.analyser);
+      if (bg) bg.attach(audio.analyser);
+      if (strip) strip.attach(audio.analyser);
+      if (window.DVScope && DVScope.Live) live = new DVScope.Live({ analyser: audio.analyser });
+      decodeForWave();
+      loop();
+    } catch (e) {
+      audio.failed = true; audio.why = String((e && e.message) || e);
+      say('the audio graph could not be built — ' + esc(audio.why) + '. Playback still works; the substrate and the browser lane do not.', true);
+    }
+    return audio.ready ? audio : null;
+  }
+  function resume() { if (audio.ctx && audio.ctx.state === 'suspended') { try { audio.ctx.resume(); } catch (e) {} } }
+  function applyGain() {
+    var g = (+$('gain').value || 0) / 100;
+    if (audio.ready) { try { audio.gain.gain.value = g; } catch (e) {} AU.volume = 1; }
+    else AU.volume = Math.max(0, Math.min(1, g));
+  }
+
+  // ── the frame loop: ring, strip state, live metrics, playhead, loop ─────
+  var raf = 0, lastLive = 0;
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    pumpRing();
+    var st = strip ? strip.state() : (bg ? bg.state() : 'untapped');
+    $('scopeState').textContent = st;
+    if (wave && AU.src) wave.setPlayhead(AU.paused ? null : AU.currentTime);
+    if (sel && $('loop').checked && !AU.paused && AU.currentTime >= sel.to) { try { AU.currentTime = sel.from; } catch (e) {} }
+    var now = performance.now();
+    if (live && !AU.paused && now - lastLive > 250) { lastLive = now; paintLive(live.read()); }
+  }
+  function paintLive(m) {
+    // DVScope.metrics() answers { value: {…floats}, precision18: {k: {wei, decimal}} } — the wei string
+    // IS the 18-place record; the float is shown, the record is in the title
+    if (!m || !m.value) return;
+    var keys = [['rms', 'rms', ''], ['dominantFrequency', 'dominant', 'Hz'], ['spectralCentroid', 'centroid', 'Hz'],
+                ['spectralRolloff', 'rolloff', 'Hz'], ['spectralBandwidth', 'bandwidth', 'Hz'],
+                ['spectralFlux', 'flux', ''], ['zeroCrossingRate', 'zcr', ''], ['harmonicNoiseRatio', 'hnr', 'dB']];
+    var h = '';
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i][0], v = m.value[k], p18 = m.precision18 && m.precision18[k];
+      h += '<tr><td class="k">' + keys[i][1] + '</td><td class="v" title="' + esc(p18 ? p18.wei + ' wei (×1e-18)' : '') + '">' +
+           esc(typeof v === 'number' ? v.toFixed(6) : String(v == null ? '' : v)) + '</td><td class="u">' + keys[i][2] + '</td></tr>';
+    }
+    var vp = (strip && strip.print) || (bg && bg.print);
+    if (vp) h += '<tr><td class="k">voiceprint</td><td class="v ex" colspan="2">' + esc(vp.short) + '</td></tr>';
+    $('live').innerHTML = h;
+    $('liveNote').textContent = 'per frame · ' + (audio.analyser ? audio.analyser.fftSize : 0) + '-point';
+  }
+
+  // ── the waveform ───────────────────────────────────────────────────────
+  var decoded = false;
+  function decodeForWave() {
+    if (decoded || !window.DVWaveform || !audio.ctx) return;
+    decoded = true;
+    fetch('/audio').then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
+      .then(function (ab) { return new Promise(function (res, rej) { var p = audio.ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }); })
+      .then(function (buf) {
+        wave.load(buf);
+        $('waveNote').textContent = buf.numberOfChannels + 'ch · ' + buf.sampleRate + ' Hz · ' + buf.duration.toFixed(3) + ' s · ' + wave.regime();
+      }).catch(function (e) { decoded = false; $('waveNote').textContent = 'not drawn — ' + ((e && e.message) || e); });
+  }
+  if (window.DVWaveform) {
+    wave = new DVWaveform.View($('wave'), { rulerHeight: 24 });
+    wave.on('seek', function (e) { if (!AU.src) return; try { AU.currentTime = Math.max(0, Math.min(AU.duration || e.seconds, e.seconds)); } catch (x) {} });
+    wave.on('select', function (s) {
+      sel = s;
+      $('zsel').disabled = !s; $('clr').disabled = !s;
+      // THE SELECTION IS THE CLAIM. Debounced, because a drag emits continuously and the host
+      // measures f0 by autocorrelation over every frame of the region.
+      clearTimeout(measureTimer);
+      measureTimer = setTimeout(function () { measureHost(s); }, 180);
+    });
+    wave.on('zoom', function () { $('waveNote').textContent = wave.duration ? (wave.regime() + ' · ' + (wave.spp < 1 ? wave.spp.toFixed(3) : Math.round(wave.spp)) + ' spp') : 'decoding…'; });
+  }
+
+  // ── the host lane ──────────────────────────────────────────────────────
+  function fmt(v, places) {
+    // the value is a decimal string with 18 places; the table shows 6 and the title holds all 18
+    var s = String(v), i = s.indexOf('.');
+    return i < 0 ? s : s.slice(0, i + 1 + (places || 6));
+  }
+  function rowsOf(ms, into, prev) {
+    var h = '';
+    Object.keys(ms).forEach(function (k) {
+      if (k.indexOf('band_') === 0) return;
+      var m = ms[k], cls = '';
+      if (prev && prev[k]) cls = prev[k].raw === m.raw ? ' same' : ' diff';
+      h += '<tr><td class="k">' + esc(k) + '</td><td class="v' + cls + '" title="' + esc(m.value) + ' (' + esc(m.exactness) + ')">' +
+           esc(fmt(m.value)) + '</td><td class="u">' + esc(m.unit || '') + '</td></tr>';
+    });
+    into.innerHTML = h;
+  }
+  function bandRows(ms) {
+    var h = '';
+    Object.keys(ms).forEach(function (k) {
+      if (k.indexOf('band_') !== 0) return;
+      var m = ms[k], pct = (parseFloat(m.value) * 100).toFixed(3);
+      h += '<tr><td class="k">' + esc(k.slice(5)) + ' <span class="ex">' + m.range_hz[0] + '–' + m.range_hz[1] + '</span></td><td class="v">' + pct + '</td><td class="u">%</td></tr>';
+    });
+    $('bands').innerHTML = h;
+  }
+  var whole = null;
+  function measureHost(s) {
+    var seq = ++measureSeq;
+    var url = s ? '/api/measure?from=' + s.from.toFixed(6) + '&to=' + s.to.toFixed(6) : '/api/measure';
+    $('regionNote').textContent = s ? 'measuring ' + mmss(s.from) + ' → ' + mmss(s.to) + '…' : 'measuring the whole file…';
+    fetch(url).then(function (r) { return r.json(); }).then(function (j) {
+      if (seq !== measureSeq) return;                            // a newer selection is in flight
+      if (j.error) { say(esc(j.error), true); return; }
+      if (j.whole) whole = j.measurements;
+      rowsOf(j.measurements, $('host'), j.whole ? null : whole);
+      bandRows(j.measurements);
+      $('regionNote').textContent = j.whole ? 'whole file · ' + j.frames + ' frames'
+        : mmss(j.from) + ' → ' + mmss(j.to) + ' · ' + j.frames + ' frames · green = same as the whole, amber = differs';
+    }).catch(function (e) { say('the host lane did not answer — ' + esc((e && e.message) || e), true); });
+  }
+
+  // ── transport ──────────────────────────────────────────────────────────
+  function play() {
+    gestured = true; ensureAudio(); resume();
+    if (sel && $('loop').checked && (AU.currentTime < sel.from || AU.currentTime >= sel.to)) { try { AU.currentTime = sel.from; } catch (e) {} }
+    var p = AU.play(); if (p && p.catch) p.catch(function (e) { say('the browser would not start playback — ' + esc((e && e.message) || e), true); });
+  }
+  $('play').onclick = function () { if (AU.paused) play(); else AU.pause(); };
+  $('stop').onclick = function () { AU.pause(); try { AU.currentTime = sel ? sel.from : 0; } catch (e) {} };
+  $('zsel').onclick = function () { if (wave) wave.zoomToSelection(); };
+  $('zfit').onclick = function () { if (wave) wave.fit(); };
+  $('clr').onclick = function () { if (wave) wave.clearSelection(); sel = null; $('zsel').disabled = $('clr').disabled = true; measureHost(null); };
+  $('gain').oninput = function () { $('gainV').textContent = $('gain').value + '%'; applyGain(); };
+  $('rate').oninput = function () { $('rateV').textContent = (+$('rate').value).toFixed(2) + '×'; AU.playbackRate = +$('rate').value; };
+  AU.addEventListener('play', function () { $('play').textContent = '❚❚ PAUSE'; $('play').className = 'hot'; });
+  AU.addEventListener('pause', function () { $('play').textContent = '▶ PLAY'; $('play').className = ''; });
+  AU.addEventListener('ended', function () { if (sel && $('loop').checked) { try { AU.currentTime = sel.from; } catch (e) {} play(); } });
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+    if (e.code === 'Space') { e.preventDefault(); $('play').click(); }
+  });
+
+  // ── boot ───────────────────────────────────────────────────────────────
+  fetch('/api/source').then(function (r) { return r.json(); }).then(function (s) {
+    source = s;
+    $('src').innerHTML = '<b>' + esc(s.name) + '</b> · ' + esc(s.container) + '/' + esc(s.encoding) + ' · ' + s.sample_rate + ' Hz · ' + s.channels + 'ch · ' +
+      mmss(s.seconds) + ' · ' + kb(s.bytes) + ' · sha256 ' + esc(s.sha256.slice(0, 16)) + '…';
+    document.title = 'audbol · ' + s.name;
+    AU.src = '/audio';
+    measureHost(null);
+    say('press <b>PLAY</b> — the graph is built on that press, and the substrate starts measuring. Drag on the waveform to select; the host re-measures the selection.');
+  }).catch(function (e) { say('no source — ' + esc((e && e.message) || e), true); });
+  if (!raf) loop();
+})();
+</script>
+</body>
+</html>

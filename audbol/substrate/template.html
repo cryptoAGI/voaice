@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>substrate template</title>
+<!--
+  THE SUBSTRATE, AS A TEMPLATE. Copy this directory (python -m audbol template DIR) and start here.
+  It runs from a file:// URL with no server: pick an audio file and it plays under the ground, the
+  ring and the strip, with the browser lane's metrics on the right. Every place you are expected to
+  extend is marked  ▶ EXTEND  and explained in TEMPLATE.md. The five *.js beside this file are the
+  substrate itself — byte for byte from DeltaVerse (PROVENANCE.md) — and are NOT edited here: a
+  change to them is a change upstream, copied back with its hash.
+
+  THE WIRING, IN ONE PARAGRAPH. One <audio> element → createMediaElementSource → GainNode →
+  AnalyserNode → destination. The analyser is the single tap: voice-scope Fields attach() to it and
+  draw; the ring is charged from eight bands of its spectrum once per frame; DVScope.Live reads it
+  for the metrics. Everything visual is a READOUT of that node, so nothing can show a voice that is
+  not there — the Field's state() names which of four states it is in. The graph is built on the
+  FIRST GESTURE and never before (a context made without one is suspended and reads zeroes forever),
+  and createMediaElementSource is called ONCE per element, ever.
+-->
+<style>
+:root{--dv-bg:#05060c;--dv-ink:#e6edf3;--dv-violet:#8b5cf6;--dv-electric:#9fe9ff;--dv-gold:#ffd166;
+  --dv-accent:#9d4edd;--dv-agent:#7ee787;--dv-cyan:#22d3ee;--cy:34,211,238;--vi:157,78,221;--am:255,176,84;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--quiet:rgba(255,255,255,.42)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--dv-bg);color:var(--dv-ink);font:14px/1.5 ui-sans-serif,system-ui,sans-serif}
+canvas#bg,canvas#border{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+canvas#bg{opacity:.55}
+.wrap{position:relative;z-index:1;padding:26px;display:grid;grid-template-rows:auto 1fr;gap:14px;min-height:100vh}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:11px var(--mono);letter-spacing:.1em;color:var(--quiet)}
+button,label.pick{font:600 12px var(--mono);letter-spacing:.08em;padding:8px 12px;border-radius:8px;cursor:pointer;
+  background:#0b0f1a;color:var(--dv-ink);border:1px solid rgba(255,255,255,.18)}
+button:disabled{opacity:.4;cursor:not-allowed}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:14px;min-height:0}
+@media (max-width:820px){main{grid-template-columns:minmax(0,1fr)}}
+.box{border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden;background:rgba(4,5,12,.72);position:relative}
+.box .hd{display:flex;justify-content:space-between;padding:8px 12px;font:10px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:rgb(var(--am));border-bottom:1px solid rgba(255,255,255,.07)}
+.box .hd span{color:var(--quiet);letter-spacing:.06em;text-transform:none}
+.box .cv{position:relative;height:160px}
+.box .cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+table{border-collapse:collapse;width:100%;font:11px var(--mono)}
+td{padding:2px 12px;border-top:1px solid rgba(255,255,255,.04)}
+td.k{color:var(--quiet)}td.v{text-align:right;font-variant-numeric:tabular-nums}
+#status{font:11px var(--mono);color:var(--quiet)}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<canvas id="border" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="bar">
+    <label class="pick">PICK A FILE <input id="file" type="file" accept="audio/*" hidden></label>
+    <button id="play" type="button" disabled>▶ PLAY</button>
+    <span id="status">no file — pick one; the graph is built on the first press of PLAY</span>
+    <audio id="au" preload="auto" hidden></audio>
+    <!-- ▶ EXTEND (1): put your own controls here. Anything that changes the sound goes BEFORE the
+         analyser in the graph (see ensureAudio) so the substrate shows what you did to it. -->
+  </div>
+  <main>
+    <div class="box"><div class="hd">oscilloscope <span id="scopeState">untapped</span></div>
+      <div class="cv"><canvas id="strip"></canvas></div></div>
+    <div class="box"><div class="hd">browser lane · DVScope <span id="liveNote">per frame</span></div>
+      <table id="live"></table>
+      <!-- ▶ EXTEND (2): a second table here is where host-lane numbers (audbol's Fixed18 over the
+           file) would go — see audbol/web/index.html for the fetch against /api/measure. -->
+    </div>
+  </main>
+</div>
+
+<script src="./theme-read.js"></script>
+<script src="./oscilloscope.js"></script>
+<script src="./voice-scope.js"></script>
+<script src="./periphery-frame.js"></script>
+<script src="./waveform.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var AU = $('au'), audio = { ctx: null, src: null, gain: null, analyser: null, ready: false, failed: false };
+  var gestured = false, live = null, bg = null, strip = null, ring = null;
+
+  // ── the substrates, mounted at load; they draw their untapped state until a tap exists ──
+  if (window.DVVoiceScope) {
+    try { bg = new DVVoiceScope.Field($('bg'), { background: true, printHz: 2 }).start(); } catch (e) {}
+    try { strip = new DVVoiceScope.Field($('strip'), { background: false, printHz: 2 }).start(); } catch (e) {}
+  }
+  if (window.DVPeriphery) { try { ring = new DVPeriphery.Field($('border'), { pad: 14, motes: 200 }).start(); } catch (e) {} }
+
+  // ── eight log-spaced bands over 80–8000 Hz → the eight ring stations ──
+  // ▶ EXTEND (3): this is where the SPECTRUM becomes EVENTS. Replace or add to ring.charge() with
+  // your own reactions to a band — a threshold crossing is an event, a band's rise over N frames is
+  // an onset, the ratio of two bands is a timbre. DVPeriphery.RING lists the station ids in order.
+  var BAND_LO = 80, BAND_HI = 8000, NB = 8, edges = null, ref = null, dbBuf = null, magBuf = null;
+  function buildBands(a) {
+    var n = a.frequencyBinCount, sr = audio.ctx.sampleRate, hz = sr / a.fftSize;
+    edges = [];
+    for (var b = 0; b <= NB; b++) edges.push(Math.max(0, Math.min(n - 1, Math.round(BAND_LO * Math.pow(BAND_HI / BAND_LO, b / NB) / hz))));
+    ref = new Float32Array(NB); dbBuf = new Float32Array(n); magBuf = new Float32Array(n);
+  }
+  function pumpRing() {
+    if (!ring || !audio.analyser || !edges || !window.DVScope) return;
+    var a = audio.analyser;
+    try { a.getFloatFrequencyData(dbBuf); } catch (e) { for (var z = 0; z < NB; z++) ring.charge(DVPeriphery.RING[z], 0); return; }
+    magBuf = DVScope.linearFromDb(dbBuf, a.minDecibels, magBuf);   // dB in, magnitude out — or every band is 0
+    for (var b = 0; b < NB; b++) {
+      var s = 0, c = 0;
+      for (var i = edges[b], i1 = Math.max(edges[b] + 1, edges[b + 1]); i < i1; i++) { s += magBuf[i] * magBuf[i]; c++; }
+      var m = c ? Math.sqrt(s / c) : 0;
+      ref[b] = Math.max(m, ref[b] * 0.985);                          // a decaying peak: the display is RELATIVE
+      ring.charge(DVPeriphery.RING[b], ref[b] > 1e-9 ? Math.pow(m / ref[b], 2) : 0);
+    }
+  }
+
+  // ── the audio graph: first gesture, once ──
+  function ensureAudio() {
+    if (audio.ready || audio.failed || !gestured) return audio.ready;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) { audio.failed = true; return false; }
+    try {
+      audio.ctx = new AC();
+      audio.src = audio.ctx.createMediaElementSource(AU);            // ONCE per element, ever
+      audio.gain = audio.ctx.createGain();
+      audio.analyser = audio.ctx.createAnalyser();
+      audio.analyser.fftSize = 2048; audio.analyser.smoothingTimeConstant = 0.72;
+      // ▶ EXTEND (4): insert your own nodes between gain and analyser (a filter, a convolver, a worklet).
+      // The substrate measures what reaches the analyser, so an effect placed here is SEEN; one placed
+      // after the analyser is heard but not drawn — and that gap is exactly the kind of lie to avoid.
+      audio.src.connect(audio.gain); audio.gain.connect(audio.analyser); audio.analyser.connect(audio.ctx.destination);
+      audio.ready = true;
+      buildBands(audio.analyser);
+      if (bg) bg.attach(audio.analyser);
+      if (strip) strip.attach(audio.analyser);
+      if (window.DVScope && DVScope.Live) live = new DVScope.Live({ analyser: audio.analyser });
+      loop();
+    } catch (e) { audio.failed = true; $('status').textContent = 'the audio graph could not be built — ' + ((e && e.message) || e); }
+    return audio.ready;
+  }
+
+  // ── the frame loop: one pass, everything reads the same tap ──
+  var lastLive = 0;
+  function loop() {
+    requestAnimationFrame(loop);
+    pumpRing();
+    $('scopeState').textContent = strip ? strip.state() : 'untapped';
+    var now = performance.now();
+    if (live && !AU.paused && now - lastLive > 250) { lastLive = now; paintLive(live.read()); }
+    // ▶ EXTEND (5): the voiceprint. (strip || bg).print is the last hash of what was measured — held,
+    // never invented; strip.on('print', fn) delivers each new one. This is the seam for anything that
+    // wants to act on WHO is speaking rather than how loud.
+  }
+  function paintLive(m) {
+    if (!m || !m.value) return;
+    var keys = ['rms', 'dominantFrequency', 'spectralCentroid', 'spectralRolloff', 'spectralBandwidth', 'spectralFlux', 'zeroCrossingRate', 'harmonicNoiseRatio'];
+    var h = '';
+    for (var i = 0; i < keys.length; i++) {
+      var v = m.value[keys[i]], p18 = m.precision18 && m.precision18[keys[i]];
+      h += '<tr><td class="k">' + keys[i] + '</td><td class="v" title="' + (p18 ? p18.wei + ' wei' : '') + '">' + (typeof v === 'number' ? v.toFixed(6) : v) + '</td></tr>';
+    }
+    var vp = (strip && strip.print) || (bg && bg.print);
+    if (vp) h += '<tr><td class="k">voiceprint</td><td class="v">' + vp.short + '</td></tr>';
+    $('live').innerHTML = h;
+  }
+
+  // ── transport ──
+  $('file').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    AU.src = URL.createObjectURL(f); $('play').disabled = false;
+    $('status').textContent = f.name + ' · ' + Math.round(f.size / 1024) + ' KB — press PLAY';
+  });
+  $('play').onclick = function () {
+    gestured = true; ensureAudio();
+    if (audio.ctx && audio.ctx.state === 'suspended') { try { audio.ctx.resume(); } catch (e) {} }
+    if (AU.paused) { var p = AU.play(); if (p && p.catch) p.catch(function (e) { $('status').textContent = 'refused: ' + e.message; }); }
+    else AU.pause();
+  };
+  AU.addEventListener('play', function () { $('play').textContent = '❚❚ PAUSE'; });
+  AU.addEventListener('pause', function () { $('play').textContent = '▶ PLAY'; });
+})();
+</script>
+</body>
+</html>

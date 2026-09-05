@@ -124,3 +124,19 @@ its twin, and `test/test_vprint.py` is what keeps them one thing rather than two
 ## Licence
 
 MIT. See `LICENSE`.
+
+## audbol — the instrument, and the wiring to expand from
+
+[`audbol/`](audbol/) measures a file exactly (every quantity a `Fixed18`, every
+report carrying the sha256 of the bytes) and puts the playdocs **substrate** under
+it: `python -m audbol serve FILE` opens one loopback page where the ground, the
+ring and the strip draw the voice as it plays, and a region dragged on the
+waveform is re-measured on the host. The five substrate modules are kept byte for
+byte with their hashes (`audbol/substrate/PROVENANCE.md`) as a **template**;
+`python -m audbol template DIR` copies it out to build on.
+
+[`audbol/WIRING.md`](audbol/WIRING.md) is the part that matters here: one tap,
+three readouts, and how a band of the spectrum becomes an event you can act on —
+onset, silence, timbre, **identity** (a live voiceprint held against
+`voices/*.voaice`), and a host-lane proof of any region. Extend from the wiring,
+not from the picture.
