@@ -1,0 +1,29 @@
+{
+ "format": "voaice-pronunciation/1",
+ "version": 1,
+ "lang": "en",
+ "phonemizer": "espeak-ng 1.51, voice en-gb — the front end piper phonemizes through",
+ "rule": "case-insensitive, one pass, longest match first; applied to the text given to a synthesiser and to nothing else",
+ "entries": [
+  {
+   "match": "PYTHAIML",
+   "say": "Pith AI M L",
+   "why": "pythaiml — the PYTHAI machine-learning archive: PYTHAI as below, then the letters M and L",
+   "source": "operator, 2026-09-14 (follows from PYTHAI)",
+   "ipaWritten": "pˈaɪtaɪməl",
+   "ipaSaid": "pˈɪθ ˌeɪˈaɪ ˌɛmˈɛl",
+   "phonemizer": "espeak-ng en-gb",
+   "added": "2026-09-14"
+  },
+  {
+   "match": "PYTHAI",
+   "say": "Pith AI",
+   "why": "Pyth-A-I: Pyth as in Pythia, the oracle of Delphi, then the letters A and I",
+   "source": "operator, 2026-09-14",
+   "ipaWritten": "pˈaɪtaɪ",
+   "ipaSaid": "pˈɪθ ˌeɪˈaɪ",
+   "phonemizer": "espeak-ng en-gb",
+   "added": "2026-09-14"
+  }
+ ]
+}

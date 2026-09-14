@@ -16,6 +16,10 @@ tools/voaice.py          measure a wav into a .voaice; show; compare
 web/capture.html         microphone capture + live vprint. No server, nothing uploaded.
 engine/oscilloscope.js   the definition the Python twin must agree with
 test/test_vprint.py      proves the two agree
+pronunciation/lexicon.json  how the realm's names are SAID — one respelling table, every engine
+tools/pronounce.py       list · say · find · check (espeak-ng IPA) · add
+engine/pronounce.js      the same table and rule, for the browser and Node
+test/test_pronounce.py   proves the two say the same thing
 ```
 
 These are the two saved voices of the [DeltaVerse](https://deltaverse.pythai.net/voices) —
@@ -113,6 +117,37 @@ The `synthesis` field in every `.voaice` is the seam where one would attach, and
 it is `null` in every file shipped. It exists so that the interface is written
 down and so that a file claiming a voice can be asked *which model speaks it*. A
 file that claims otherwise should be disbelieved until it names one.
+
+## Pronunciation — what a voice says
+
+A voice is who speaks; [PRONUNCIATION.md](PRONUNCIATION.md) is what they say. The realm's own names
+are not in any synthesiser's dictionary — espeak-ng, which piper phonemizes through, reads **PYTHAI**
+as "pie-tie", and a whisper.cpp transcript of a real render said "Paitai". The name is **Pyth-A-I**:
+Pyth as in Pythia, the oracle of Delphi, then A, I. One table
+([`pronunciation/lexicon.json`](pronunciation/lexicon.json)) respells it for the speech only,
+`tools/pronounce.py` and `engine/pronounce.js` apply it identically, and the guide says which lanes
+the table reaches today and which it does not yet.
+
+```bash
+python3 tools/pronounce.py check PYTHAI     # /pˈaɪtaɪ/ as written · /pˈɪθ ˌeɪˈaɪ/ as said
+python3 test/test_pronounce.py
+```
+
+## Heard in
+
+- **[rage.pythai.net](https://rage.pythai.net)** — every article's LISTEN button plays NEURAL and
+  JAIMLA from files rendered ahead, e.g.
+  [Savante's First Contribution](https://rage.pythai.net/savante-first-contribution-pythai/) and
+  [Three readers, one voice](https://rage.pythai.net/three-readers-one-voice/); the render store's
+  [ledger](https://deltaverse.pythai.net/audio/ledger.txt) measures each file against its text.
+- **[deltaverse.pythai.net/playdocs](https://deltaverse.pythai.net/playdocs)** — any page, read in any
+  cast voice, with the substrate that [`audbol/`](audbol/) keeps byte for byte;
+  [listen](https://deltaverse.pythai.net/listen) · [docsreader](https://deltaverse.pythai.net/docsreader) ·
+  [voices](https://deltaverse.pythai.net/voices) · [docsplayer](https://deltaverse.pythai.net/docsplayer).
+- **[mindX](https://mindx.pythai.net)** — the renderers, the render queue and ledger, and the docspeech
+  engines that speak these voices; its copy of the pronunciation table is
+  `data/config/pronunciation.json`.
+- **[wordpress.reader](https://github.com/Professor-Codephreak/docsreader)** — the LISTEN button itself.
 
 ## Provenance
 
