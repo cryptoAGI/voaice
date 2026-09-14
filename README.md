@@ -147,6 +147,9 @@ python3 test/test_pronounce.py
 - **[mindX](https://mindx.pythai.net)** — the renderers, the render queue and ledger, and the docspeech
   engines that speak these voices; its copy of the pronunciation table is
   `data/config/pronunciation.json`.
+- **voicey** — [Professor-Codephreak/voaice](https://github.com/Professor-Codephreak/voaice), the voice
+  stack that speaks these voices (TTS, cloning, ASR, the `/voicey` surface), carried inside mindX at
+  `voaice/`. This repository is the identity card; that one is the voice.
 - **[wordpress.reader](https://github.com/Professor-Codephreak/docsreader)** — the LISTEN button itself.
 
 ## Provenance

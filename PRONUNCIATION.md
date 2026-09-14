@@ -116,7 +116,7 @@ reaches today:
 | **The render store** — every rage article pre-rendered in NEURAL and JAIMLA | [rage.pythai.net](https://rage.pythai.net) LISTEN; files under [`deltaverse.pythai.net/audio/`](https://deltaverse.pythai.net/audio/ledger.txt) | piper → espeak-ng | **yes, v1 since 2026-09-14** — mindX `mindx_backend_service/deltaverse/render/lexicon.py` loads `data/config/pronunciation.json`, a byte copy of this table |
 | playdocs, `/listen`, `/docsreader` — any page rendered on request | [deltaverse.pythai.net/playdocs](https://deltaverse.pythai.net/playdocs) · [/listen](https://deltaverse.pythai.net/listen) · [/docsreader](https://deltaverse.pythai.net/docsreader) | the docsplayer service → mindX docspeech (piper, espeak-ng) | **not yet.** The seam is the block texts in `services/docsplayer/server.py` before `eng.synth`. The host keys a render by text and voice, so the table version must join that key, or held renders keep the old reading |
 | docs read aloud | mindx.pythai.net `/listen/{doc}` | espeak-ng over stdin | **not yet** — the seam is the prose before it is written to espeak's stdin |
-| voicey — mindX's voice service (audio.cpp families, Kokoro/OpenVoice) | the `/voicey` surface | audio.cpp's own front ends; `src/g2p.js` → espeak-ng for the phoneme-driven models | **not yet** — the seam is the text before `phonemize()` and before an engine call. audio.cpp's front ends were not measured against this table |
+| **voicey** — the voice stack ([Professor-Codephreak/voaice](https://github.com/Professor-Codephreak/voaice), carried inside mindX at `voaice/`, documented in its `VOICEY.md`): audio.cpp families, Kokoro/OpenVoice, cloning | the `/voicey?persona=&text=` surface of the voaice service | audio.cpp's own front ends; `src/g2p.js` → espeak-ng for the phoneme-driven models | **not yet** — the seam is the text before `phonemize()` and before an engine call, where `engine/pronounce.js` drops in. audio.cpp's front ends were not measured against this table |
 | the browser's own voice (the ANCIENT lane, wordpress.reader's host lane) | any page running `voices.js` | the platform voice (Windows, macOS, Android, speech-dispatcher) | **not yet** — `engine/pronounce.js` is the drop-in: `P.spoken()` on the utterance text |
 | visemes — the mouth shapes for a line | the faces on the stage | whisper.cpp timings + espeak-ng IPA of the line | follows the audio; phonemize the **spoken** form so the mouth matches the sound |
 
@@ -195,5 +195,8 @@ Two to look at first: **THlNK** is spelled with a lowercase L, so espeak reads i
   queue, the ledger and the docspeech engines live in mindX:
   `mindx_backend_service/deltaverse/render/` (`lexicon.py`, `render_neural.py`, `render_jaimla.py`,
   `render_ledger.py`) and `data/config/pronunciation.json`.
+- **voicey** — [Professor-Codephreak/voaice](https://github.com/Professor-Codephreak/voaice), the voice
+  stack (speech in, speech out, measured throughout), is carried inside mindX at `voaice/`; this
+  repository holds the voices' identity cards, and that one speaks them.
 - **The reader** — [Professor-Codephreak/docsreader](https://github.com/Professor-Codephreak/docsreader)
   is wordpress.reader, the LISTEN button on rage.
