@@ -1,6 +1,6 @@
 {
  "format": "voaice-pronunciation/1",
- "version": 1,
+ "version": 2,
  "lang": "en",
  "phonemizer": "espeak-ng 1.51, voice en-gb — the front end piper phonemizes through",
  "rule": "case-insensitive, one pass, longest match first; applied to the text given to a synthesiser and to nothing else",
@@ -14,6 +14,16 @@
    "ipaSaid": "pˈɪθ ˌeɪˈaɪ ˌɛmˈɛl",
    "phonemizer": "espeak-ng en-gb",
    "added": "2026-09-14"
+  },
+  {
+   "match": "SAVANTE",
+   "say": "Sav ont",
+   "why": "Savante is said sav-ont, as in the old idiot savant — the truth teller, the master of mathematics; espeak read the written name as sav-AHN-tay, a third syllable the name does not have. Savante is powered by sAGI (c) 2026 PYTHAI",
+   "source": "operator, 2026-09-23",
+   "ipaWritten": "savˈɑːnteɪ",
+   "ipaSaid": "sˈav ˈɒnt",
+   "phonemizer": "espeak-ng en-gb",
+   "added": "2026-09-23"
   },
   {
    "match": "PYTHAI",

@@ -21,6 +21,8 @@ oracle of Delphi."*
 | **said** | `Pith AI` | espeak-ng: /pˈɪθ ˌeɪˈaɪ/ — **Pyth-A-I** |
 | written | `PYTHAIML` | espeak-ng: /pˈaɪtaɪməl/ — "pie-tie-mull" |
 | **said** | `Pith AI M L` | espeak-ng: /pˈɪθ ˌeɪˈaɪ ˌɛmˈɛl/ |
+| written | `SAVANTE` | espeak-ng: /savˈɑːnteɪ/ — "sav-ahn-tay", a third syllable the name does not have |
+| **said** | `Sav ont` | espeak-ng: /sˈav ˈɒnt/ — **sav-ont**, as in the old *idiot savant*: the truth teller, the master of mathematics (operator, 2026-09-23). Savante is powered by sAGI © 2026 PYTHAI |
 
 "Pyth" is /pɪθ/, as English says the oracle. espeak-ng's own reading of *Pythia* is /pˈaɪθiə/, so
 the respelling is `Pith`, not `Pyth`. Checked in context — a possessive (`Pith AI’s` →
