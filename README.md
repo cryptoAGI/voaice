@@ -11,6 +11,12 @@ uint256.
 voices/neural.voaice     NEURAL  — piper en_GB-alan-medium, measured
 voices/jaimla.voaice     JAIMLA  — piper en_GB-jenny_dioco-medium, measured
 voices/vclone.voaice     vCLONE  — the template, measured into by you
+voices/overlord.voaice   OVERLORD — layered: the whole cast in one delivery (14 layers), measured, recipe inside
+voices/leaderofearth.voaice  LEADER — layered: one voice, shaped (reference ×0.92 speed ×0.88 pitch + broadcast EQ), measured
+voices/leader_tone.voaice    LEADER's second face — earth as tone, Jaimla an octave up in echo, measured
+voices/espeak-ng/*.espeak.voaice  the espeak-ng lineage of neural · jaimla · overlord · ovie · participant (2026-09-02), measured
+archive/espeak-ng-store-2026-09-02/  every espeak-era recording of /map, /periphery and /404, whole, with the renderer of record
+archive/first-piper-overlord-2026-09-03/  the two-voice OVERLORD, the stage between espeak and the cast
 tools/vprint.py          the voiceprint, server-side
 tools/voaice.py          measure a wav into a .voaice; show; compare
 web/capture.html         microphone capture + live vprint. No server, nothing uploaded.
@@ -48,6 +54,33 @@ the arithmetic never supported it either. Near enough that the two stack rather
 than clash, which is the part that matters for
 [MONY](https://deltaverse.pythai.net/docsplayer) — and far enough that calling it
 an octave is flattering it.
+
+## The rendered voices, and the lineage kept
+
+OVERLORD and LEADER are not saved voices; they are RECIPES over the saved ones, and the
+recipe is written into each file under `recipe` (the registry entry that renders it, verbatim,
+from mindX `data/config/docspeech_voices.json`). Their prints were measured 2026-09-24 from the
+first 30 s of their rendered reading of [/voices](https://deltaverse.pythai.net/voices), block 1
+onward, with the same parameters as the saved voices.
+
+| | OVERLORD | LEADER | LEADER · tone face |
+|---|---|---|---|
+| recipe | 14 layers on neural, banded, octave/unison by measurement | reference ×0.92 speed ×0.88 pitch, 4-band EQ, 0.85 s pauses | LEADER's body + earth as element + Jaimla an octave up, in echo |
+| f0 median | 98.88 Hz (p90 195 — Jaimla on the octave) | **83.52 Hz** | 86.64 Hz |
+| vprint | `18ff6e30…8aaf6ef267d` | `60231d6f…2742089488` | `876f7c3a…5b22f535eb9` |
+
+OVERLORD's 27 % "octave errors" are the chord, not a fault: the tracker sees two fundamentals.
+Compare it by the eight metrics.
+
+**The espeak-ng lineage is kept, not overwritten.** The realm's first rendered store
+(2026-09-02) was espeak-ng 1.51 wearing the voices' names — a stated ratio on the reference,
+mapped onto `-s` and `-p` (neural 172/50, jaimla 161/46, overlord 147/42, ovie 185/54,
+participant 172/50). On 2026-09-03 neural became piper `en_GB-alan-medium` and the store was
+re-rendered; the layered cast followed. `voices/espeak-ng/` holds a measured `.voaice` per voice
+of that lineage with the exact command in `recipe`, and `archive/espeak-ng-store-2026-09-02/`
+holds every recording of it, whole — manifests, parts and `render-listen.mjs`, the renderer of
+record. participant at ×0.98 rounds to neural's 172 wpm, so its espeak rendering is byte-identical
+to neural's and carries the same vprint; that is the record, so it is kept as it is.
 
 ## A vprint is a fingerprint of a *measurement*
 

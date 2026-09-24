@@ -1,0 +1,41 @@
+{
+ "doc": "404",
+ "voice": "participant",
+ "voiceName": "Participant",
+ "derivedFrom": "neural ×0.98 rate ×1.00 pitch",
+ "engine": "espeak-ng 1.51 → opusenc 24kbps mono",
+ "wpm": 172,
+ "pitch": 50,
+ "generated": "2026-09-02T20:16:38.092Z",
+ "blocks": 4,
+ "parts": [
+  {
+   "n": 1,
+   "file": "part-01.opus",
+   "seconds": 30.689,
+   "bytes": 98590,
+   "from": 0,
+   "to": 3,
+   "marks": [
+    {
+     "block": 0,
+     "at": 0
+    },
+    {
+     "block": 1,
+     "at": 1.764
+    },
+    {
+     "block": 2,
+     "at": 11.165
+    },
+    {
+     "block": 3,
+     "at": 13.637
+    }
+   ]
+  }
+ ],
+ "seconds": 30.689,
+ "bytes": 98590
+}

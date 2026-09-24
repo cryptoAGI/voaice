@@ -1,0 +1,41 @@
+{
+ "doc": "404",
+ "voice": "neural",
+ "voiceName": "Neural",
+ "derivedFrom": "the reference",
+ "engine": "espeak-ng 1.51 → opusenc 24kbps mono",
+ "wpm": 172,
+ "pitch": 50,
+ "generated": "2026-09-02T20:15:51.835Z",
+ "blocks": 4,
+ "parts": [
+  {
+   "n": 1,
+   "file": "part-01.opus",
+   "seconds": 30.689,
+   "bytes": 98590,
+   "from": 0,
+   "to": 3,
+   "marks": [
+    {
+     "block": 0,
+     "at": 0
+    },
+    {
+     "block": 1,
+     "at": 1.764
+    },
+    {
+     "block": 2,
+     "at": 11.165
+    },
+    {
+     "block": 3,
+     "at": 13.637
+    }
+   ]
+  }
+ ],
+ "seconds": 30.689,
+ "bytes": 98590
+}

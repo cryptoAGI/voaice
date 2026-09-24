@@ -1,0 +1,41 @@
+{
+ "doc": "404",
+ "voice": "overlord",
+ "voiceName": "OVERLORD",
+ "derivedFrom": "neural ×0.84 rate ×0.84 pitch",
+ "engine": "espeak-ng 1.51 → opusenc 24kbps mono",
+ "wpm": 147,
+ "pitch": 42,
+ "generated": "2026-09-02T20:16:15.120Z",
+ "blocks": 4,
+ "parts": [
+  {
+   "n": 1,
+   "file": "part-01.opus",
+   "seconds": 36.147,
+   "bytes": 113868,
+   "from": 0,
+   "to": 3,
+   "marks": [
+    {
+     "block": 0,
+     "at": 0
+    },
+    {
+     "block": 1,
+     "at": 2.104
+    },
+    {
+     "block": 2,
+     "at": 13.173
+    },
+    {
+     "block": 3,
+     "at": 16.051
+    }
+   ]
+  }
+ ],
+ "seconds": 36.147,
+ "bytes": 113868
+}

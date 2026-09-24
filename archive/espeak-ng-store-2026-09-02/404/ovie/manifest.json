@@ -1,0 +1,41 @@
+{
+ "doc": "404",
+ "voice": "ovie",
+ "voiceName": "Ovie",
+ "derivedFrom": "neural ×1.06 rate ×1.08 pitch",
+ "engine": "espeak-ng 1.51 → opusenc 24kbps mono",
+ "wpm": 185,
+ "pitch": 54,
+ "generated": "2026-09-02T20:16:27.021Z",
+ "blocks": 4,
+ "parts": [
+  {
+   "n": 1,
+   "file": "part-01.opus",
+   "seconds": 28.49,
+   "bytes": 92543,
+   "from": 0,
+   "to": 3,
+   "marks": [
+    {
+     "block": 0,
+     "at": 0
+    },
+    {
+     "block": 1,
+     "at": 1.635
+    },
+    {
+     "block": 2,
+     "at": 10.391
+    },
+    {
+     "block": 3,
+     "at": 12.667
+    }
+   ]
+  }
+ ],
+ "seconds": 28.49,
+ "bytes": 92543
+}

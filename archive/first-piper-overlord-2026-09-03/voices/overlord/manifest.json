@@ -1,0 +1,163 @@
+{
+ "doc": "voices",
+ "voice": "overlord",
+ "voiceName": "OVERLORD",
+ "derivedFrom": "neural and jaimla, speaking at once",
+ "engine": "piper en_GB-alan-medium + piper en_GB-jenny_dioco-medium -> opusenc 24kbps mono",
+ "engineNote": "The two neural voices of the realm in unison. Two people speaking together is a sound with no single owner \u2014 the pitch stops belonging to a person and starts belonging to the statement. Aligned PER SENTENCE: they do not agree on timing, and one stretch factor for a whole block leaves them in unison at the start and a syllable apart by the end.",
+ "layers": [
+  {
+   "role": "reference",
+   "model": "en_GB-alan-medium",
+   "gain": 1.0,
+   "lengthScale": 1.0,
+   "sentenceSilence": 0.25,
+   "note": "neural, never stretched \u2014 it is the voice that does not move"
+  },
+  {
+   "role": "unison",
+   "model": "en_GB-jenny_dioco-medium",
+   "gain": 0.62,
+   "lengthScale": 1.041667,
+   "note": "jaimla, fitted to the reference sentence by sentence"
+  }
+ ],
+ "alignment": {
+  "sentences": 54,
+  "stretchMedian": 0.9165,
+  "stretchMin": 0.7465,
+  "stretchMax": 1.0413,
+  "note": "how far jaimla had to be moved to land on neural, per sentence"
+ },
+ "clonedFrom": "mindX docspeech_voices.json",
+ "sampleRate": 22050,
+ "generated": "2026-09-03T02:53:39.000Z",
+ "blocks": 28,
+ "seconds": 351.956,
+ "bytes": 1137997,
+ "parts": [
+  {
+   "n": 1,
+   "file": "part-01.opus",
+   "url": "/audio/voices/overlord/part-01.opus",
+   "seconds": 351.956,
+   "bytes": 1137997,
+   "from": 0,
+   "to": 27,
+   "marks": [
+    {
+     "block": 0,
+     "at": 0.0
+    },
+    {
+     "block": 1,
+     "at": 1.302
+    },
+    {
+     "block": 2,
+     "at": 4.671
+    },
+    {
+     "block": 3,
+     "at": 5.776
+    },
+    {
+     "block": 4,
+     "at": 14.138
+    },
+    {
+     "block": 5,
+     "at": 23.033
+    },
+    {
+     "block": 6,
+     "at": 36.874
+    },
+    {
+     "block": 7,
+     "at": 38.71
+    },
+    {
+     "block": 8,
+     "at": 52.041
+    },
+    {
+     "block": 9,
+     "at": 70.491
+    },
+    {
+     "block": 10,
+     "at": 85.214
+    },
+    {
+     "block": 11,
+     "at": 88.467
+    },
+    {
+     "block": 12,
+     "at": 89.758
+    },
+    {
+     "block": 13,
+     "at": 99.199
+    },
+    {
+     "block": 14,
+     "at": 101.535
+    },
+    {
+     "block": 15,
+     "at": 123.05
+    },
+    {
+     "block": 16,
+     "at": 159.96
+    },
+    {
+     "block": 17,
+     "at": 182.242
+    },
+    {
+     "block": 18,
+     "at": 183.486
+    },
+    {
+     "block": 19,
+     "at": 196.468
+    },
+    {
+     "block": 20,
+     "at": 226.911
+    },
+    {
+     "block": 21,
+     "at": 244.955
+    },
+    {
+     "block": 22,
+     "at": 254.907
+    },
+    {
+     "block": 23,
+     "at": 256.0
+    },
+    {
+     "block": 24,
+     "at": 279.571
+    },
+    {
+     "block": 25,
+     "at": 316.702
+    },
+    {
+     "block": 26,
+     "at": 317.807
+    },
+    {
+     "block": 27,
+     "at": 330.382
+    }
+   ]
+  }
+ ]
+}

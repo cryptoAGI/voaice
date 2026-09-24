@@ -1,0 +1,41 @@
+{
+ "doc": "404",
+ "voice": "jaimla",
+ "voiceName": "Jaimla",
+ "derivedFrom": "neural ×0.92 rate ×0.92 pitch",
+ "engine": "espeak-ng 1.51 → opusenc 24kbps mono",
+ "wpm": 161,
+ "pitch": 46,
+ "generated": "2026-09-02T20:16:02.926Z",
+ "blocks": 4,
+ "parts": [
+  {
+   "n": 1,
+   "file": "part-01.opus",
+   "seconds": 32.85,
+   "bytes": 104711,
+   "from": 0,
+   "to": 3,
+   "marks": [
+    {
+     "block": 0,
+     "at": 0
+    },
+    {
+     "block": 1,
+     "at": 1.915
+    },
+    {
+     "block": 2,
+     "at": 11.97
+    },
+    {
+     "block": 3,
+     "at": 14.598
+    }
+   ]
+  }
+ ],
+ "seconds": 32.85,
+ "bytes": 104711
+}
