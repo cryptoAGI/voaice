@@ -20,8 +20,9 @@ Rules the table keeps (and `add` enforces):
     PYTHAI + "ML" and a spoken form is never matched again;
   * a spoken form may not contain any entry's match — it would read differently in a second pass by
     an engine that applies the table twice;
-  * every change bumps `version`, and every rendered file records the version it was made with, so a
-    store can find the renders a change makes wrong.
+  * every change bumps `version`, every entry records the version that added it (`since`), and every
+    rendered file records the version it was made with, so a store can find exactly the renders a change
+    makes wrong (said_wrong).
 """
 import argparse
 import json
@@ -66,6 +67,16 @@ def find(text, table=None):
     return counts
 
 
+def said_wrong(text, version, table=None):
+    """Would a render made under table `version` say something in this text the old way? Only the
+    entries added after it (`since` > version) count, so a new name does not condemn every render
+    that merely contains an old one."""
+    t = table if table is not None else load()
+    newer = [e for e in t.get("entries", []) if int(e.get("since", 1)) > int(version or 0)]
+    rx, _ = compile_table(dict(t, entries=newer))
+    return bool(rx and rx.search(text))
+
+
 def espeak_ipa(text, voice):
     exe = shutil.which("espeak-ng") or shutil.which("espeak")
     if not exe:
@@ -105,6 +116,7 @@ def main():
     p.add_argument("match"); p.add_argument("say")
     p.add_argument("--why", required=True); p.add_argument("--source", required=True)
     p.add_argument("--voice", default="en-gb")
+    p.add_argument("--register", default=None, help="scientific · technical · financial — the register the name belongs to")
     a = ap.parse_args()
     table = load(a.table)
 
@@ -132,7 +144,10 @@ def main():
     elif a.cmd == "add":
         entry = {"match": a.match, "say": a.say, "why": a.why, "source": a.source,
                  "ipaWritten": espeak_ipa(a.match, a.voice), "ipaSaid": espeak_ipa(a.say, a.voice),
-                 "phonemizer": "espeak-ng %s" % a.voice, "added": time.strftime("%Y-%m-%d")}
+                 "phonemizer": "espeak-ng %s" % a.voice, "added": time.strftime("%Y-%m-%d"),
+                 "since": table["version"] + 1}
+        if a.register:
+            entry["register"] = a.register
         entries = [e for e in table["entries"] if e["match"].lower() != a.match.lower()]
         candidate = dict(table, entries=entries + [entry], version=table["version"] + 1)
         problems = validate(candidate)
@@ -141,7 +156,7 @@ def main():
             return 1
         save(candidate, a.table)
         print("version %d: %s → %r  /%s/ → /%s/" % (candidate["version"], a.match, a.say, entry["ipaWritten"], entry["ipaSaid"]))
-        print("every render made with an older version that contains %s now reads it the old way — re-render it" % a.match)
+        print("every render made before version %d that contains %s now reads it the old way — re-render it" % (candidate["version"], a.match))
     return 0
 
 

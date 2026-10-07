@@ -157,6 +157,75 @@ Read the transcript against the page. A name the model has never seen comes back
 spelling, and that spelling is a phonetic transcription of what was actually said: "Paitai" is
 /ˈpaɪtaɪ/.
 
+## The bankML register — scientific, technical, financial (table v3)
+
+[bankML](https://github.com/cryptoAGI/bankml) is read aloud in its own words for the first time in
+[the bankML thesis on rage.pythai.net](https://rage.pythai.net/bankML-thesis), in the NEURAL voice. A
+thesis about exactness should not be read inexactly, so on 2026-10-06 every term in it that a reader
+in the field would say differently was put to espeak-ng 1.51 (`en-gb`, the front end piper
+phonemizes through) on the production node, and only the ones it got wrong were added. 32 entries,
+each with the IPA as written and as said, measured, never guessed:
+
+| register | written | espeak-ng read | said | espeak-ng now reads |
+|---|---|---|---|---|
+| scientific | `2B4T` | /tˈuː bˈiː fˈɔː tˈiː/ | `2 billion parameters, 4 trillion tokens` | /tˈuː bˈɪliən pəɹˈamɪtəz fˈɔː tɹˈɪliən tˈəʊkənz/ |
+| scientific | `arXiv` | /ˈɑː zˈɪv/ | `archive` | /ˈɑːkaɪv/ |
+| scientific | `bankML` | /bˈaŋk ˌɛmˈɛl/ | `bank M L` | /bˈaŋk ˈɛm ˈɛl/ |
+| scientific | `Bonsai-1.7B` | /bˈɒnsaɪ wˈɒn pɔɪnt sˈɛvən bˈiː/ | `Bonsai 1.7 billion` | /bˈɒnsaɪ wˈɒn pɔɪnt sˈɛvən bˈɪliən/ |
+| scientific | `Bonsai-8B` | /bˈɒnsaɪ ˈeɪt bˈiː/ | `Bonsai 8 billion` | /bˈɒnsaɪ ˈeɪt bˈɪliən/ |
+| scientific | `ECCV` | /ˈɛkv/ | `E C C V` | /ˈiː sˈiː sˈiː vˈiː/ |
+| scientific | `EigenAI` | /ˈaɪdʒən ˌeɪˈaɪ/ | `Eye ghen AI` | /ˈaɪ ɡˈɛn ˌeɪˈaɪ/ |
+| scientific | `GB/s` | /dʒˌiːbˈiː slˈaʃ ˈɛs/ | `gigabytes per second` | /ɡˈɪɡəbˌaɪts pɜː sˈɛkənd/ |
+| scientific | `Gerganov` | /dʒˈɜːɡɐnˌɒv/ | `Ghergaanov` | /ɡˈɜːɡɑːnˌɒv/ |
+| scientific | `ICLR` | /ˈaɪklə/ | `I C L R` | /aɪ sˈiː ˈɛl ˈɑː/ |
+| scientific | `ICML` | /ˈaɪkməl/ | `I C M L` | /aɪ sˈiː ˈɛm ˈɛl/ |
+| scientific | `IEEE` | /ˌaɪˌiːˌiːˈiː/ | `I triple E` | /aɪ tɹˈɪpəl ˈiː/ |
+| scientific | `ms/token` | /ˌɛmˈɛs slˈaʃ tˈəʊkən/ | `milliseconds per token` | /mˈɪlɪsˌɛkəndz pɜː tˈəʊkən/ |
+| scientific | `tok/s` | /tˈɒk slˈaʃ ˈɛs/ | `tokens per second` | /tˈəʊkənz pɜː sˈɛkənd/ |
+| scientific | `tokens/s` | /tˈəʊkənz slˈaʃ ˈɛs/ | `tokens per second` | /tˈəʊkənz pɜː sˈɛkənd/ |
+| scientific | `µs` | /mˌaɪkɹəʊˈɛs/ | `microseconds` | /mˈaɪkɹəʊsˌɛkəndz/ |
+| technical | `3200U` | /θɹˈiː θˈaʊzənd tˈuːhˈʌndɹɪd jˈuː/ | `thirty two hundred U` | /θˈɜːti tˈuː hˈʌndɹɪd jˈuː/ |
+| technical | `AVX` | /ˈavks/ | `A-V-X` | /ˈeɪvˈiːˈɛks/ |
+| technical | `AWQ` | /ˈɔːk/ | `A-W-Q` | /ˈeɪdˈʌbəljˌuːkjˈuː/ |
+| technical | `bitnet.cpp` | /bˈɪtnɪt dˈɒt sˌiːpˌiːpˈiː/ | `Bit Net.cpp` | /bˈɪt nˈɛt dˈɒt sˌiːpˌiːpˈiː/ |
+| technical | `GGUF` | /dʒˈiːɡˈʌf/ | `G G U F` | /dʒˈiː dʒˈiː jˈuː ˈɛf/ |
+| technical | `no_std` | /nˈəʊ ˌɛstˌiːdˈiː/ | `no standard` | /nˈəʊ stˈandəd/ |
+| technical | `ONNX` | /ˈɒŋŋks/ | `onyx` | /ˈɒnɪks/ |
+| technical | `OxiLLaMa` | /ˈɒksi ˈɛl lˌa mˈɑː/ | `oxy llama` | /ˈɒksi lˈɑːmə/ |
+| technical | `Qwen` | /kjˈuːwˈɛn/ | `Kwen` | /kwˈɛn/ |
+| financial | `18dp` | /ˈeɪtiːn dˌiːpˈiː/ | `18 decimal places` | /ˈeɪtiːn dˈɛsɪməl plˈeɪsɪz/ |
+| financial | `EIP-` | /ˈaɪp/ | `E I P ` | /ˈiː aɪ pˈiː/ |
+| financial | `ERC-` | /ˈɜːk/ | `E R C ` | /ˈiː ˈɑː sˈiː/ |
+| financial | `EVM` | /ˈɛvəm/ | `E V M` | /ˈiː vˈiː ˈɛm/ |
+| financial | `Pareto` | /paɹˈiːtəʊ/ | `Pa ray toe` | /pˈɑː ɹˈeɪ tˈəʊ/ |
+| financial | `USDC` | /ˈʌsdk/ | `U S D C` | /jˈuː ˈɛs dˈiː sˈiː/ |
+| financial | `x402` | /ˈɛks fˈɔːhˈʌndɹɪdən tˈuː/ | `x four oh two` | /ˈɛks fˈɔːɹ ˈəʊ tˈuː/ |
+
+What the register means: **scientific** — units and rates read as units and rates (*tokens per
+second*, not *tokens slash s*), venues and standards bodies said as their fields say them (*I triple
+E*, *I C L R*), a parameter count read as a count (*Bonsai eight billion*), names given the
+consonants their languages give them (*Gerganov* with a hard G, *Eigen* as in eigenvalue).
+**Technical** — formats and instruction sets as engineers say them (*G G U F*, *A-V-X 2*, *onyx*,
+*no standard*). **Financial** — payment and token standards as the market says them (*x four oh
+two*, *E R C 20*, *U S D C*, *eighteen decimal places*).
+
+**What it refused, and why.** The rule is a case-insensitive match anywhere in the text, so a short
+term that lives inside an ordinary word cannot go in: *DeFi* (inside *define*), *APR* (*April*),
+*AMM* (*grammar*), *wei* (*weigh*), *APY* (*happy*), *IQ* (*unique*), *CID* (*acid*), *GiB*
+(*gibbon*), *QuIP* (*equip*), *GB* (*rugby*). Each was checked against 102,485 dictionary words; the 32
+above collide with none.
+
+**What a respelling cannot fix** — stated, not hidden: a currency amount (`$1.00` is read *dollar one
+point zero zero*), an en-dash range (`9.4–10×` is read *nine point four ten times*, the *to* is lost)
+and an arXiv identifier (`2402.17764` is read as a decimal) need a number normaliser, not a lexicon.
+Until one exists, prose meant to be heard writes them out: *one US dollar*, *9.4 to 10 times*.
+
+**`since` — a new name condemns only the renders it changes.** Each entry now records the table
+version that added it. Before v3 a store marked every render older than the table as *said wrong*
+if its text held **any** name in the table — so adding *bankML* would have queued every article that
+says PYTHAI. `tools/pronounce.py` `said_wrong(text, version)` counts only entries with `since` greater
+than the render's version; mindX's render ledger does the same.
+
 ## How espeak-ng reads the realm's names today
 
 Measured 2026-09-14, espeak-ng 1.51, `en-gb`. **Only PYTHAI and PYTHAIML are confirmed by the
