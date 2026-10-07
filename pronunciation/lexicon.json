@@ -1,6 +1,6 @@
 {
  "format": "voaice-pronunciation/1",
- "version": 3,
+ "version": 4,
  "lang": "en",
  "phonemizer": "espeak-ng 1.51, voice en-gb — the front end piper phonemizes through",
  "rule": "case-insensitive, one pass, longest match first; applied to the text given to a synthesiser and to nothing else",
@@ -28,6 +28,18 @@
    "phonemizer": "espeak-ng en-gb",
    "added": "2026-10-06",
    "since": 3
+  },
+  {
+   "match": "DeltaVerse",
+   "say": "Delta Verse",
+   "why": "the realm's own name. Each neural voice alone says it whole, but in the OVERLORD voice (neural and jaimla in unison, jaimla time-fitted per sentence) the joined word smears to \"Delta V\": whisper.cpp base heard -verse in 2 of 6 blended takes as written, 5 of 6 as \"Delta Verse\", 4 of 6 as \"Delta-verse\". The word break gives Verse its own stress, which the blend keeps",
+   "register": "realm",
+   "source": "measured, 2026-10-07: piper en_GB-alan + en_GB-jenny_dioco in the render_overlord.py blend, opus 24 kb/s, whisper.cpp ggml-base.en, 6 takes per spelling (rage-1564 had been heard as \"Delta V\")",
+   "ipaWritten": "dˈɛltə vˈɜːs",
+   "ipaSaid": "dˈɛltə vˈɜːs",
+   "phonemizer": "espeak-ng en-gb",
+   "added": "2026-10-07",
+   "since": 4
   },
   {
    "match": "Bonsai-8B",

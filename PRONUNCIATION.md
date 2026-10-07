@@ -226,6 +226,17 @@ if its text held **any** name in the table — so adding *bankML* would have que
 says PYTHAI. `tools/pronounce.py` `said_wrong(text, version)` counts only entries with `since` greater
 than the render's version; mindX's render ledger does the same.
 
+## DeltaVerse — the name the blend dropped (table v4)
+
+Each neural voice alone says *DeltaVerse* whole, and espeak-ng gives "DeltaVerse" and "Delta Verse" the
+same phonemes (/dˈɛltə vˈɜːs/). The OVERLORD voice is different: neural and jaimla in unison, jaimla
+time-fitted to neural sentence by sentence. In that blend the joined word smeared, and whisper.cpp heard
+the opening of [OVERLORD of the DeltaVerse](https://rage.pythai.net/overlord-of-the-deltaverse/) as
+"the Overlord of the **Delta V**". Six blended takes per spelling, transcribed with ggml-base.en:
+*-verse* survived in **2/6** as written, **5/6** as "Delta Verse", 4/6 as "Delta-verse". piper's VITS
+synthesis is stochastic, so a single take proves little; the word break gives *Verse* its own stress, and
+that is what the blend keeps. The lesson for any layered voice: test the blend, not the layers.
+
 ## How espeak-ng reads the realm's names today
 
 Measured 2026-09-14, espeak-ng 1.51, `en-gb`. **Only PYTHAI and PYTHAIML are confirmed by the
@@ -239,7 +250,7 @@ before it is heard in a render.
 | mindX | mˈaɪnd ˈɛks | | SHAMBA | ʃˈambə |
 | JAIMLA | dʒˈeɪmlə | | sAGI | ˈɛs ˈɑːɡɪ |
 | BANKON | bˈaŋkən | | Savante | savˈɑːnteɪ |
-| DeltaVerse | dˈɛltə vˈɜːs | | codephreak | kˈəʊdfɹiːk |
+| **DeltaVerse** | dˈɛltə vˈɜːs → **"Delta Verse"** (v4: the OVERLORD blend smeared the joined word to "Delta V") | | codephreak | kˈəʊdfɹiːk |
 | SCIEN·TIFIC | sˈaɪən tˈɪfɪk | | AgenticPlace | eɪdʒˈɛntɪk plˈeɪs |
 | aGLM | ɐ dʒˌiːˌɛlˈɛm | | DAIO | dˈeɪəʊ |
 | THOT | θˈɒt | | iNFT | ˈaɪ ˌɛnˌɛftˈiː |
