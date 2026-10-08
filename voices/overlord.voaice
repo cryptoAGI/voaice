@@ -82,7 +82,7 @@
  },
  "provenance": {
   "text": "the first 30 s of the rendered reading of /voices, from block 1",
-  "source": "/tmp/claude-1000/-home-hacker-DeltaVerse/d153e65c-acc7-49fa-86e9-824b172abf31/scratchpad/tpl/wav/voices-overlord.wav",
+  "source": "voices-overlord.wav (the 14-layer OVERLORD render of 2026-09-24, measured in a local working directory)",
   "measuredAt": "2026-09-24",
   "tool": "voaice.py voaice/1",
   "render": {

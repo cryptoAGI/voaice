@@ -248,7 +248,7 @@ Where the voices are heard and kept:
 - **Voice library on Hugging Face** — [PYTHAI/voaice](https://huggingface.co/PYTHAI/voaice):
   70 open-licensed [Piper](https://github.com/rhasspy/piper) voices, unchanged from
   [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices), each with its own licence
-  and model card; Piper credited. Being published now — it may still be private when you read this.
+  and model card; Piper credited..
 - **The pronunciation table** — [PRONUNCIATION.md](PRONUNCIATION.md) ·
   [`pronunciation/lexicon.json`](pronunciation/lexicon.json), here.
 - **playdocs** — [deltaverse.pythai.net/playdocs](https://deltaverse.pythai.net/playdocs): any page
