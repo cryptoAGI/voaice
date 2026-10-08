@@ -236,19 +236,20 @@ All three need only `python3` and `node`; run 2026-10-07, all pass.
 
 ## Where it lives — the voaice family
 
-voaice has two public origins. They are halves of one idea, not copies:
+voaice has three public repositories. They are parts of one idea, not copies:
 
 | | what it is |
 |---|---|
 | **[cryptoAGI/voaice](https://github.com/cryptoAGI/voaice)** — this repository | what a voice **is**, written down: identity cards, the vprint, vCLONE capture, the pronunciation table, the espeak-ng archive |
 | **[Professor-Codephreak/voaice](https://github.com/Professor-Codephreak/voaice)** | the voice **stack**: in-house DSP, 18-dp scientific and forensic voiceprints, a non-destructive editor, WAV/OGG export, torch-free neural TTS and zero-shot cloning |
+| **[cryptoAGI/voaicers](https://github.com/cryptoAGI/voaicers)** | voaice.rs — the **listening** half in Rust: a zero-dependency rewrite of whisper.cpp, bit-exact against the compiled reference before it is fast (0.0.1: the model loader and log-mel front end, 0 ULP) |
 
 Where the voices are heard and kept:
 
 - **Voice library on Hugging Face** — [PYTHAI/voaice](https://huggingface.co/PYTHAI/voaice):
   70 open-licensed [Piper](https://github.com/rhasspy/piper) voices, unchanged from
   [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices), each with its own licence
-  and model card; Piper credited..
+  and model card; Piper credited.
 - **The pronunciation table** — [PRONUNCIATION.md](PRONUNCIATION.md) ·
   [`pronunciation/lexicon.json`](pronunciation/lexicon.json), here.
 - **playdocs** — [deltaverse.pythai.net/playdocs](https://deltaverse.pythai.net/playdocs): any page
