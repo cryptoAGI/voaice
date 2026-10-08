@@ -26,9 +26,13 @@ pronunciation/lexicon.json  how the realm's names are SAID — one respelling ta
 tools/pronounce.py       list · say · find · check (espeak-ng IPA) · add
 engine/pronounce.js      the same table and rule, for the browser and Node
 test/test_pronounce.py   proves the two say the same thing
+PRONUNCIATION.md         the guide to the table: every lane, and whether the table reaches it
+FORMAT.md                the .voaice file format
+audbol/                  the instrument: exact measurement + the playdocs substrate (see below)
+archive/README.md        what the archive holds and why it is kept whole
 ```
 
-These are the two saved voices of the [DeltaVerse](https://deltaverse.pythai.net/voices) —
+`neural.voaice` and `jaimla.voaice` are the two saved voices of the [DeltaVerse](https://deltaverse.pythai.net/voices) —
 the reference and the female voice — the ones `doc.player` and `docsreader` actually
 render from. `jaimla.voaice` is what "jaimla the stored voice" means here: not a
 recording of her, but the measurements that let you tell her renderings apart from
@@ -71,6 +75,11 @@ onward, with the same parameters as the saved voices.
 
 OVERLORD's 27 % "octave errors" are the chord, not a fault: the tracker sees two fundamentals.
 Compare it by the eight metrics.
+
+**`overlord.voaice` is the 14-layer recipe of 2026-09-24, not the OVERLORD heard today.** Since
+2026-10-07 the OVERLORD voice on rage.pythai.net is a different render (v3): the two neural voices
+in unison, aligned frame by frame — see [the voaice family](#where-it-lives--the-voaice-family).
+That render has not been measured into a `.voaice` yet, so no print here describes it.
 
 **The espeak-ng lineage is kept, not overwritten.** The realm's first rendered store
 (2026-09-02) was espeak-ng 1.51 wearing the voices' names — a stated ratio on the reference,
@@ -161,9 +170,15 @@ Pyth as in Pythia, the oracle of Delphi, then A, I. One table
 `tools/pronounce.py` and `engine/pronounce.js` apply it identically, and the guide says which lanes
 the table reaches today and which it does not yet.
 
+The table is at **v4, 36 entries**: the realm's names (PYTHAI, PYTHAIML, SAVANTE; v4 adds
+**DeltaVerse → "Delta Verse"**, because the OVERLORD blend smeared the joined word to "Delta V")
+and, since v3, the **bankML register** — scientific, technical and financial terms (`tok/s`,
+`GGUF`, `ERC-`, `x402`, `18dp`, …). Each entry records the version that added it (`since`), so a
+render is called *said wrong* only for names the table learned after it was made.
+
 ```bash
-python3 tools/pronounce.py check PYTHAI     # /pˈaɪtaɪ/ as written · /pˈɪθ ˌeɪˈaɪ/ as said
-python3 test/test_pronounce.py
+python3 tools/pronounce.py check PYTHAI     # /pˈaɪtaɪ/ as written · /pˈɪθ ˌeɪˈaɪ/ as said (needs espeak-ng)
+python3 test/test_pronounce.py              # ok: 8 cases, python == node, table v4 with 36 entries
 ```
 
 ## Heard in
@@ -181,8 +196,9 @@ python3 test/test_pronounce.py
   engines that speak these voices; its copy of the pronunciation table is
   `data/config/pronunciation.json`.
 - **voicey** — [Professor-Codephreak/voaice](https://github.com/Professor-Codephreak/voaice), the voice
-  stack that speaks these voices (TTS, cloning, ASR, the `/voicey` surface), carried inside mindX at
-  `voaice/`. This repository is the identity card; that one is the voice.
+  stack (TTS, cloning, ASR), carried inside mindX at `voaice/`. This repository is the identity card;
+  that one is the voice. The `/voicey` surface itself is in the copy mindX runs (v3.4+) and is not
+  yet published there — GitHub holds v3.3.0.
 - **[wordpress.reader](https://github.com/Professor-Codephreak/docsreader)** — the LISTEN button itself.
 
 ## Provenance
@@ -191,10 +207,6 @@ python3 test/test_pronounce.py
 self-contained copy with no CDN and no remote dependency, which is the standing
 rule for outside code in this fabric. It is the definition; `tools/vprint.py` is
 its twin, and `test/test_vprint.py` is what keeps them one thing rather than two.
-
-## Licence
-
-MIT. See `LICENSE`.
 
 ## audbol — the instrument, and the wiring to expand from
 
@@ -211,3 +223,58 @@ three readouts, and how a band of the spectrum becomes an event you can act on �
 onset, silence, timbre, **identity** (a live voiceprint held against
 `voices/*.voaice`), and a host-lane proof of any region. Extend from the wiring,
 not from the picture.
+
+## Tests
+
+```bash
+python3 test/test_vprint.py                  # python and the browser agree on every case
+python3 test/test_pronounce.py               # the table, said the same in python and node
+cd audbol && python3 -m pytest -q tests      # 14 passed
+```
+
+All three need only `python3` and `node`; run 2026-10-07, all pass.
+
+## Where it lives — the voaice family
+
+voaice has two public origins. They are halves of one idea, not copies:
+
+| | what it is |
+|---|---|
+| **[cryptoAGI/voaice](https://github.com/cryptoAGI/voaice)** — this repository | what a voice **is**, written down: identity cards, the vprint, vCLONE capture, the pronunciation table, the espeak-ng archive |
+| **[Professor-Codephreak/voaice](https://github.com/Professor-Codephreak/voaice)** | the voice **stack**: in-house DSP, 18-dp scientific and forensic voiceprints, a non-destructive editor, WAV/OGG export, torch-free neural TTS and zero-shot cloning |
+
+Where the voices are heard and kept:
+
+- **Voice library on Hugging Face** — [PYTHAI/voaice](https://huggingface.co/PYTHAI/voaice):
+  70 open-licensed [Piper](https://github.com/rhasspy/piper) voices, unchanged from
+  [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices), each with its own licence
+  and model card; Piper credited. Being published now — it may still be private when you read this.
+- **The pronunciation table** — [PRONUNCIATION.md](PRONUNCIATION.md) ·
+  [`pronunciation/lexicon.json`](pronunciation/lexicon.json), here.
+- **playdocs** — [deltaverse.pythai.net/playdocs](https://deltaverse.pythai.net/playdocs): any page
+  read in any cast voice. The ANCIENT lane renders on the reader's own device, inside a budget the
+  reader sets for processor, memory and graphics (shared with LISTEN), and asks the host only when
+  the device cannot. Also [/listen](https://deltaverse.pythai.net/listen), the cast at
+  [/voices](https://deltaverse.pythai.net/voices), and the render
+  [ledger](https://deltaverse.pythai.net/audio/ledger.txt). Source:
+  [Professor-Codephreak/playdocs](https://github.com/Professor-Codephreak/playdocs).
+- **The audio deck on [rage.pythai.net](https://rage.pythai.net)** — every article is read aloud
+  from pre-rendered audio; the LISTEN button opens the deck
+  ([docsreader](https://github.com/Professor-Codephreak/docsreader)).
+- **The OVERLORD voice** — heard on
+  [OVERLORD of the DeltaVerse](https://rage.pythai.net/overlord-of-the-deltaverse/); sample:
+  [overlord-v3-presence.opus](https://deltaverse.pythai.net/audio/samples/overlord-v3-presence.opus).
+  Two neural voices in unison, aligned frame by frame (DTW) and re-timed without re-pitching
+  (WSOLA) — residual lag 0–10 ms, from a v1 median of ~100 ms — with an octave and a fifth below,
+  presence harmonics, and a diffuse hall with no discrete echo.
+- **[ollywoo](https://deltaverse.pythai.net/ollywoo)** — the whole suite from the high-end UI:
+  the Hollywood of AI avatars, staged inside DeltaVerse, where **irecto** (the director) deploys
+  the finished personas and every participant is at once director and performer.
+- **Siblings** — [faicey](https://github.com/Professor-Codephreak/faicey) (FACE) ·
+  [facerig](https://github.com/Professor-Codephreak/facerig) (RIG) ·
+  [aivatar](https://github.com/Professor-Codephreak/aivatar) (the being they compose) ·
+  [mindX](https://mindx.pythai.net) · [DeltaVerse](https://deltaverse.pythai.net).
+
+## Licence
+
+MIT. See `LICENSE`.
