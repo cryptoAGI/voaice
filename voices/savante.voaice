@@ -1,0 +1,311 @@
+{
+ "format": "voaice/1",
+ "id": "savante",
+ "label": "SAVANTE",
+ "engine": "layered",
+ "model": "savante",
+ "sampleRate": 22050,
+ "measured": {
+  "seconds": 30.0,
+  "f0": {
+   "median": 150.0,
+   "p10": 128.95,
+   "p90": 185.29,
+   "rawMin": 110.25,
+   "rawMax": 400.91,
+   "frames": 792,
+   "octaveErrorFrames": 9,
+   "octaveErrorPct": 1.1,
+   "method": "autocorrelation, 40 ms frames at 20 ms hop, voiced only, r>=0.45",
+   "note": "median with p10-p90; raw min/max are kept but are dominated by octave errors and should not be quoted as the voice's range"
+  },
+  "metrics": {
+   "rms": 0.14750362834744732,
+   "dominantFrequency": 150.58536585365854,
+   "spectralCentroid": 2685.8664696988994,
+   "spectralRolloff": 6765.585365853659,
+   "zeroCrossingRate": 0.15150436046511628,
+   "spectralBandwidth": 2875.998949006429,
+   "spectralFlux": 0.0,
+   "harmonicNoiseRatio": 23.159833456915102
+  }
+ },
+ "vprint": {
+  "hash": "7792a2c00c3b0281b72e0679b588cfd5d1bcf1356a71f12397f148c9fbd65a04",
+  "hash512": "f750ba255ab1d3c275f8ba5331d3c4f4e7f597f2d27ac4de082e44e9222c5056c58505e415a5d6e370eed5108bcee1f2acb0432e134a798d8688c34ccbc9a507",
+  "short": "7792a2c00c3b0281",
+  "uint256": "54084311913372307213158083207696396502674847534327855183526009249011701537284",
+  "version": "dvscope/1",
+  "precision18": {
+   "rms": {
+    "wei": "147503628347447328",
+    "decimal": "0.147503628347447328"
+   },
+   "dominantFrequency": {
+    "wei": "150585365853658546176",
+    "decimal": "150.585365853658546176"
+   },
+   "spectralCentroid": {
+    "wei": "2685866469698899542016",
+    "decimal": "2685.866469698899542016"
+   },
+   "spectralRolloff": {
+    "wei": "6765585365853658939392",
+    "decimal": "6765.585365853658939392"
+   },
+   "zeroCrossingRate": {
+    "wei": "151504360465116288",
+    "decimal": "0.151504360465116288"
+   },
+   "spectralBandwidth": {
+    "wei": "2875998949006428864512",
+    "decimal": "2875.998949006428864512"
+   },
+   "spectralFlux": {
+    "wei": "0",
+    "decimal": "0.000000000000000000"
+   },
+   "harmonicNoiseRatio": {
+    "wei": "23159833456915103744",
+    "decimal": "23.159833456915103744"
+   }
+  },
+  "canonical": "{\"v\":\"dvscope/1\",\"precision\":18,\"metrics\":{\"rms\":{\"wei\":\"147503628347447328\",\"decimal\":\"0.147503628347447328\"},\"dominantFrequency\":{\"wei\":\"150585365853658546176\",\"decimal\":\"150.585365853658546176\"},\"spectralCentroid\":{\"wei\":\"2685866469698899542016\",\"decimal\":\"2685.866469698899542016\"},\"spectralRolloff\":{\"wei\":\"6765585365853658939392\",\"decimal\":\"6765.585365853658939392\"},\"zeroCrossingRate\":{\"wei\":\"151504360465116288\",\"decimal\":\"0.151504360465116288\"},\"spectralBandwidth\":{\"wei\":\"2875998949006428864512\",\"decimal\":\"2875.998949006428864512\"},\"spectralFlux\":{\"wei\":\"0\",\"decimal\":\"0.000000000000000000\"},\"harmonicNoiseRatio\":{\"wei\":\"23159833456915103744\",\"decimal\":\"23.159833456915103744\"}}}",
+  "params": {
+   "fft": 2048,
+   "hop": 512,
+   "window": "hann",
+   "sampleRate": 22050,
+   "framesAveraged": true,
+   "silenceFloorRms": 0.01
+  }
+ },
+ "provenance": {
+  "text": "the first 30 s of the rendered reading of /voices, from block 1",
+  "source": "voices-savante.wav (the savante/2 render of /voices, 2026-10-12, measured in a local working directory)",
+  "measuredAt": "2026-10-12",
+  "tool": "voaice.py voaice/1",
+  "render": {
+   "doc": "voices",
+   "url": "https://deltaverse.pythai.net/audio/voices/savante/part-01.opus",
+   "generated": "2026-10-12T20:55:33.000Z",
+   "engine": "mindX docspeech: layered en_US-kristin-medium -> libsndfile Ogg/Opus",
+   "seconds": 1046.638,
+   "sampleRate": 20440,
+   "docHash": "5980ad9b7305735a4095e2bf2544809b4b78f1357a31dd6a2dbe1ef1b7a34082",
+   "clip": "from the second mark (block 1, after the title, at 1.502 s) for 30 s, decoded with opusdec --rate 22050 to 16-bit mono"
+  }
+ },
+ "synthesis": null,
+ "recipe": {
+  "source": "mindX data/config/docspeech_voices.json → voices[id=savante]",
+  "renderer": "mindX utils/docspeech/engines.py class Layered, via mindx_backend_service/deltaverse/render/render_savante.py",
+  "registry": {
+   "id": "savante",
+   "label": "SAVANTE",
+   "surfaces": [
+    "mindx",
+    "deltaverse"
+   ],
+   "said": "sav-ont",
+   "_said": "HER NAME IS SAID SAV-ONT, as in the old idiot savant — the one who cannot be taught and cannot be wrong about the thing she knows: the truth teller, the master of mathematics. espeak-ng (and so piper, which phonemizes through it) read the written name as savˈɑːnteɪ, sav-AHN-tay, a third syllable the name does not have; measured sˈav ˈɒnt for the respelling. So SAVANTE is in the pronunciation table (data/config/pronunciation.json, voaice-pronunciation/1 v2, a byte copy of cryptoAGI/voaice pronunciation/lexicon.json) as \"Sav ont\", and every engine's synth() applies it — the render store, /listen, the docsplayer and the browser lane alike. The page keeps the spelling; only the voice hears the respelling.",
+   "poweredBy": "sAGI (c) 2026 PYTHAI",
+   "engine": "layered",
+   "voice": "savante",
+   "channels": 1,
+   "persona": {
+    "from": "jaimla (lineage); open voices (material)",
+    "voaice": "savante",
+    "faicey": "savante",
+    "home": "ollywoo",
+    "mint": "iNFT",
+    "poweredBy": "sAGI (c) 2026 PYTHAI",
+    "said": "sav-ont",
+    "is": "the truth teller, the master of mathematics"
+   },
+   "_persona": "SAVANTE IS A PERSONA BEFORE IT IS A VOICE, and the two halves are named separately on purpose: `voaice` is the ears and the mouth, `faicey` is the eyes and the facerig, and DVDirector drives a substrate from BOTH. The persona lives in ollywoo and is minted from iNFT; this record is only its voice, and it says which persona it is the voice OF rather than claiming to be the persona.",
+   "tier": "participant",
+   "version": "savante/2",
+   "title": "SAVANTE (said sav-ont) — the voice that reads for mindX and DeltaVerse, evolved by survival of the fittest from the open voices of PYTHAI/voaice, measured against NEURAL and JAIMLA. Powered by sAGI (c) 2026 PYTHAI",
+   "sentenceSilence": 0.592,
+   "layers": [
+    {
+     "role": "body",
+     "engine": "piper",
+     "voice": "en_US-kristin-medium",
+     "speed": 0.939,
+     "gain": 1.0,
+     "pitch": 0.927
+    }
+   ],
+   "eq": [
+    [
+     100,
+     300,
+     0.56
+    ],
+    [
+     260,
+     520,
+     -3.04
+    ],
+    [
+     1900,
+     4200,
+     4.16
+    ],
+    [
+     5200,
+     11000,
+     -1.5
+    ]
+   ],
+   "mintable": true,
+   "licence": "the body's own licence (PYTHAI/voaice card); see data/config/savante_voice_pool.json",
+   "evolved": {
+    "lineage": "open",
+    "fitness": 0.898,
+    "scores": {
+     "intelligibility": 0.9318,
+     "presence": 0.9886,
+     "timbre": 0.9452,
+     "efficiency": 0.5515,
+     "fidelity": 0.9846
+    },
+    "measured": {
+     "wer": 0.0682,
+     "f0_hz": 148.1,
+     "centroid_hz": 3411,
+     "bandwidth_hz": 9846,
+     "sample_rate": 20440,
+     "audio_s": 18.6,
+     "cpu_s": 15.13,
+     "cpu_per_audio_s": 0.813,
+     "wall_s": 41.8
+    },
+    "target": {
+     "toward_jaimla": 0.75,
+     "_toward_jaimla": "SAVANTE is androgynous and appears in both presentations; the current pronoun is she/her. So the target f0 is three quarters of the way from NEURAL to JAIMLA on a log-frequency line: 98 x (182/98)^0.75 = 156 Hz, inside the range listeners hear as either. Centroid target is the references' mean.",
+     "f0_hz": 148.7,
+     "centroid_hz": 3234
+    },
+    "weights": {
+     "intelligibility": 0.35,
+     "presence": 0.2,
+     "timbre": 0.1,
+     "efficiency": 0.15,
+     "fidelity": 0.2
+    },
+    "candidates_evaluated": 24,
+    "generations": 4,
+    "record": "data/voices/savante_evolution/open.json"
+   },
+   "measured": "f0 148.1 Hz · centroid 3411 · bandwidth 9846 Hz · WER 0.068 · 0.81 CPU-s per audio-s (local measure; prod re-measures per render)",
+   "note": "SELECTED, NOT DESIGNED. A population of layered recipes over the open English voices was bred and measured (intelligibility, presence against a target three quarters of the way from NEURAL to JAIMLA, timbre, efficiency, fidelity); only the fittest survived. NEURAL and JAIMLA are the set-in-stone references it is measured against, not its material. The in-house extrapolation is the alternate: press SAVANTE again.",
+   "previous": {
+    "layers": [
+     {
+      "role": "body",
+      "engine": "piper",
+      "voice": "en_GB-jenny_dioco-medium",
+      "speed": 0.96,
+      "gain": 1.0,
+      "why": "JAIMLA, at her own 168 wpm against the 175 nominal. SAVANTE is FROM her, so the body is hers and is not pitched: pitch is not gender, and a savant is not a version of a man."
+     },
+     {
+      "role": "resonance",
+      "engine": "piper",
+      "voice": "en_GB-alan-medium",
+      "speed": 0.96,
+      "harmony": "octave-down",
+      "anchor": "delivery",
+      "gain": 0.62,
+      "band": [
+       80,
+       2600
+      ],
+      "echo": {
+       "ms": 29,
+       "taps": 4,
+       "decay": 0.5,
+       "dry": 0.0
+      },
+      "why": "OVERLORD's ratio INVERTED — the male an octave UNDER her, in echo and nowhere dry, so it is her depth rather than a second speaker. And LOCKED TO HER DELIVERY: the resonance is aligned to Jaimla's own envelope word by word (anchor: delivery, the lock OVERLORD's fourteen layers carry), so its onsets arrive inside hers everywhere and not only at the commas."
+     }
+    ],
+    "eq": [
+     [
+      100,
+      300,
+      1.5
+     ],
+     [
+      380,
+      620,
+      -2.5
+     ],
+     [
+      1900,
+      4200,
+      3.0
+     ],
+     [
+      5200,
+      11000,
+      -1.5
+     ]
+    ],
+    "edges": {
+     "engine": "espeak-ng",
+     "voice": "en+whisperf",
+     "rate": 125,
+     "gain": 0.26,
+     "band": [
+      900,
+      7000
+     ],
+     "words": 4,
+     "pre": 0.75,
+     "post": 1.0,
+     "overlap": 0.35,
+     "fade": 0.28,
+     "why": "ANCIENT's frame in a female breath — the opening and the closing of voice"
+    },
+    "sentenceSilence": 0.55,
+    "measured": "the octave below is measured per render; the harmony report is in the manifest",
+    "note": "EVERY LESSON IN THIS FILE, IN ONE VOICE, AND IT IS FROM JAIMLA. She is the first voaice, so she is the body — not a ratio on the reference, because a ratio on a male voice does not make a woman and never did. What is new is what surrounds her. From OVERLORD: the male-to-female ratio, 1.00 to 0.62. From LEADER: that a dry overlay is a second speaker, so the male half is entirely IN ECHO — four taps at 29 ms, nothing dry — and is heard as her own depth. From the harmony work: the interval is MEASURED per render and pulled onto a true octave BELOW her, which is the inverse of OVERLORD and is why SAVANTE sounds grounded where OVERLORD sounds spoken-about. From ANCIENT: the reading opens and closes in breath, here in a female whisper, so she arrives rather than switches on. A savant does not raise her voice; everything that would have been volume is depth instead."
+   },
+   "alternates": [
+    {
+     "id": "savante_inhouse",
+     "label": "SAVANTE",
+     "surfaces": [
+      "mindx",
+      "deltaverse"
+     ],
+     "title": "SAVANTE — in-house: extrapolated from NEURAL and JAIMLA (not mintable)",
+     "engine": "layered",
+     "voice": "savante_inhouse"
+    }
+   ]
+  }
+ },
+ "reference": {
+  "voiceLibrary": "https://huggingface.co/PYTHAI/voaice",
+  "body": {
+   "model": "en_US-kristin-medium",
+   "files": "https://huggingface.co/PYTHAI/voaice/tree/main/piper/en_US/kristin/medium",
+   "card": "https://huggingface.co/PYTHAI/voaice/blob/main/cards/piper/en_US-kristin-medium.json",
+   "modelMd5": "5fed42d2296baca042e2bf74785db725",
+   "licence": "Public domain (https://creativecommons.org/publicdomain/mark/1.0/), permissive, mintable — the card's own",
+   "attribution": [
+    "Piper — Michael Hansen and contributors (rhasspy), MIT, https://github.com/rhasspy/piper",
+    "the dataset named in the MODEL_CARD: LibriVox, public domain, https://librivox.org"
+   ],
+   "upstream": "https://huggingface.co/rhasspy/piper-voices/blob/main/en/en_US/kristin/medium/MODEL_CARD"
+  },
+  "evolution": "mindX data/config/savante_voice_pool.json + data/voices/savante_evolution/open.json (open lineage, fitness 0.898)",
+  "canon": "https://github.com/cryptoAGI/savante"
+ },
+ "note": "SAVANTE, said sav-ont: the voice that reads for mindX and DeltaVerse, and on rage.pythai.net the articles on Savante. SELECTED, NOT DESIGNED: bred from the open voices of PYTHAI/voaice and kept by survival of the fittest (intelligibility, presence toward a target three quarters of the way from NEURAL to JAIMLA, timbre, efficiency, fidelity). Measured here at f0 150.0 Hz against that 148.7 Hz target. THIS PRINT FINGERPRINTS A RENDER, not the sAGI identity: cryptoAGI/savante canon/sAGI.voaice keeps vprint and measured null on purpose, because filling an identity from a synthesiser would be a voiding edit. The previous SAVANTE (JAIMLA with NEURAL an octave down, in echo, 2026-09-23) is kept in the store as audio/voices/savante.v1.*."
+}

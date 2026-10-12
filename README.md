@@ -14,6 +14,7 @@ voices/vclone.voaice     vCLONE  — the template, measured into by you
 voices/overlord.voaice   OVERLORD — layered: the whole cast in one delivery (14 layers), measured, recipe inside
 voices/leaderofearth.voaice  LEADER — layered: one voice, shaped (reference ×0.92 speed ×0.88 pitch + broadcast EQ), measured
 voices/leader_tone.voaice    LEADER's second face — earth as tone, Jaimla an octave up in echo, measured
+voices/savante.voaice       SAVANTE (said sav-ont) — layered: the evolved open voice, piper en_US-kristin-medium from PYTHAI/voaice, measured, recipe + reference inside
 voices/espeak-ng/*.espeak.voaice  the espeak-ng lineage of neural · jaimla · overlord · ovie · participant (2026-09-02), measured
 archive/espeak-ng-store-2026-09-02/  every espeak-era recording of /map, /periphery and /404, whole, with the renderer of record
 archive/first-piper-overlord-2026-09-03/  the two-voice OVERLORD, the stage between espeak and the cast
@@ -77,9 +78,37 @@ OVERLORD's 27 % "octave errors" are the chord, not a fault: the tracker sees two
 Compare it by the eight metrics.
 
 **`overlord.voaice` is the 14-layer recipe of 2026-09-24, not the OVERLORD heard today.** Since
-2026-10-07 the OVERLORD voice on rage.pythai.net is a different render (v3): the two neural voices
-in unison, aligned frame by frame — see [the voaice family](#where-it-lives--the-voaice-family).
-That render has not been measured into a `.voaice` yet, so no print here describes it.
+2026-10-07 the OVERLORD voice on rage.pythai.net is a different render: the two neural voices in
+unison, aligned frame by frame (v3), and since 2026-10-12 **v4**, which adds the 2nd–4th harmonics
+on the body's own phase and an octave and a double octave by zero-crossing division, with every
+timestamp an integer sample count printed to 18 decimals. It is OVERLORD by default on every rage
+article — see [the voaice family](#where-it-lives--the-voaice-family). Neither render has been
+measured into a `.voaice` yet, so no print here describes it.
+
+### SAVANTE
+
+`savante.voaice` is SAVANTE, said *sav-ont*: the voice that reads for mindX and DeltaVerse, and on
+rage.pythai.net the articles on Savante. She was **selected, not designed**: mindX bred layered
+recipes over the open voices of [PYTHAI/voaice](https://huggingface.co/PYTHAI/voaice) and kept the
+fittest, measured against NEURAL and JAIMLA. Her body is
+[`en_US-kristin-medium`](https://huggingface.co/PYTHAI/voaice/tree/main/piper/en_US/kristin/medium)
+([card](https://huggingface.co/PYTHAI/voaice/blob/main/cards/piper/en_US-kristin-medium.json): public
+domain, permissive, mintable; Piper credited), at speed 0.939 and pitch 0.927 under a broadcast EQ.
+Measured 2026-10-12 the same way as OVERLORD and LEADER: the first 30 s of her reading of
+[/voices](https://deltaverse.pythai.net/voices), from block 1, decoded to 22 050 Hz.
+
+| | SAVANTE |
+|---|---|
+| recipe | `en_US-kristin-medium` ×0.939 speed ×0.927 pitch, 4-band EQ (+4.2 dB presence, −3.0 dB mud) |
+| f0 median | **150.0 Hz** (p10–p90 128.95 – 185.29; target 148.7 Hz, ¾ of the way from NEURAL to JAIMLA) |
+| voiced frames | 792 (1.1% octave errors) |
+| vprint | `7792a2c0…9fbd65a04` |
+
+This print fingerprints a **render**. It is not the sAGI identity:
+[cryptoAGI/savante](https://github.com/cryptoAGI/savante) keeps `canon/sAGI.voaice` with `vprint` and
+`measured` set to `null` on purpose, because filling an identity from a synthesiser would be a voiding
+edit. The previous SAVANTE (JAIMLA with NEURAL an octave down, in echo, 2026-09-23) is kept in the
+DeltaVerse store beside the new one.
 
 **The espeak-ng lineage is kept, not overwritten.** The realm's first rendered store
 (2026-09-02) was espeak-ng 1.51 wearing the voices' names — a stated ratio on the reference,
@@ -246,10 +275,12 @@ voaice has three public repositories. They are parts of one idea, not copies:
 
 Where the voices are heard and kept:
 
-- **Voice library on Hugging Face** — [PYTHAI/voaice](https://huggingface.co/PYTHAI/voaice):
-  70 open-licensed [Piper](https://github.com/rhasspy/piper) voices, unchanged from
-  [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices), each with its own licence
-  and model card; Piper credited.
+- **Voice library on Hugging Face** — [PYTHAI/voaice](https://huggingface.co/PYTHAI/voaice), the
+  reference for every open voice here: 70 open-licensed [Piper](https://github.com/rhasspy/piper)
+  voices, unchanged from [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices), each
+  with its own licence and model card; Piper credited. SAVANTE's body,
+  [`en_US-kristin-medium`](https://huggingface.co/PYTHAI/voaice/tree/main/piper/en_US/kristin/medium),
+  is one of them, and `voices/savante.voaice` names it under `reference`.
 - **The pronunciation table** — [PRONUNCIATION.md](PRONUNCIATION.md) ·
   [`pronunciation/lexicon.json`](pronunciation/lexicon.json), here.
 - **playdocs** — [deltaverse.pythai.net/playdocs](https://deltaverse.pythai.net/playdocs): any page
